@@ -102,6 +102,12 @@ class Core extends Dependency {
 
     this.friends = Player.Friends.split(',').filter(f => f).map(f => Number(f));
     this.blocked = Player.Blocked.split(',').filter(b => b).map(b => Number(b));
+
+    this.materials = utils.parse(Player.Materials, {
+      iron: 0,
+      silver: 0,
+      gold: 0
+    });
   }
 
   build(inContainer) {

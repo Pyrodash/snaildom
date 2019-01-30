@@ -78,7 +78,7 @@ class World extends EventEmitter {
         break;
         case 'ENC':
           if(!client.authenticated)
-            return logger.warn('Unauthenticated client tried sending an unencrypted packet.');
+            return logger.warn('Unauthenticated client tried sending an encrypted packet.');
           if(!client.sessionKey) {
             client.disconnect();
 

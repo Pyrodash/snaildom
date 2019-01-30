@@ -58,6 +58,31 @@ class Item extends Dependency {
       });
     }
   }
+
+  addMaterial(id, amt, update) {
+    if(!amt)
+      amt = 1;
+
+    const materials = ['iron', 'silver', 'gold'];
+    id = id.toLowerCase();
+
+    if(materials.includes(id)) {
+      if(!this.materials[id])
+        this.materials[id] = 0;
+
+      this.materials[id] += amt;
+
+      if(update !== false)
+        this.updateColumn('Materials', JSON.stringify(this.materials));
+    }
+  }
+
+  removeMaterial(id, amt) {
+    if(!amt)
+      amt = 1;
+
+    this.addMaterial(-amt);
+  }
 }
 
 module.exports = Item;

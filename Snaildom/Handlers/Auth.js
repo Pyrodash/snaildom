@@ -25,6 +25,9 @@ class Auth extends Handler {
 
     this.database.getPlayer('LoginKey', loginKey)
       .then(player => {
+        if(!player)
+          return client.error(null, true);
+
         client.authenticated = true;
         client.setPlayer(player);
 
