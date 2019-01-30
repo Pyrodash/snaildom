@@ -1,0 +1,90 @@
+{
+  "knight": {
+    "id": "knight",
+    "name": "Knight",
+    "tiers": {
+      "1": "Imperial  Knight",
+      "2": "Captain"
+    },
+    "internal": "1"
+  },
+  "warlord": {
+    "id": "warlord",
+    "name": "Warlord",
+    "tiers": {
+      "1": "Warlord of Snaildom"
+    },
+    "internal": "2"
+  },
+  "wizard": {
+    "id": "wizard",
+    "name": "Magic",
+    "tiers": {
+      "1": "Wizard",
+      "2": "Necromancer"
+    },
+    "internal": "3"
+  },
+  "king": {
+    "id": "king",
+    "name": "Royal",
+    "tiers": {
+      "1": "King of Snaildom"
+    },
+    "internal": "4"
+  },
+  "beta": {
+    "id": "beta",
+    "name": "Beta",
+    "tiers": {
+      "1": ""
+    },
+    "internal": "5"
+  },
+  "dsghqworldchamp": {
+    "id": "dsghqworldchamp",
+    "name": "World Champion",
+    "tiers": {
+      "1": ""
+    },
+    "internal": "6"
+  },
+  "wise": {
+    "id": "wise",
+    "name": "Wise Council",
+    "tiers": {
+      "1": "Wise One",
+      "2": "Most Wise",
+      "3": "Grand Most Wise"
+    },
+    "internal": "7"
+  },
+  "imperialbank": {
+    "id": "imperialbank",
+    "name": "Imperial Bank",
+    "tiers": {
+      "1": "Banker",
+      "2": "Manager"
+    },
+    "internal": "8"
+  },
+  "crimeoffice": {
+    "id": "crimeoffice",
+    "name": "Crime Office",
+    "tiers": {
+      "1": "Detective"
+    },
+    "internal": "9"
+  },
+  "dsghq": {
+    "id": "dsghq",
+    "name": "DSGHQ",
+    "tiers": {
+      "1": "Member",
+      "2": "Moderator",
+      "3": "Community  Manager",
+      "4": "Administrator"
+    },
+    "internal": "10"
+  }
+}
