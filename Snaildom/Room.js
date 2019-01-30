@@ -58,7 +58,9 @@ class Room extends EventEmitter {
     client.y = utils.parseInt(y);
 
     client.frame = 1;
+    client.score = 0;
     client.room  = this;
+    client.roomJoin = new Date().getTime();
 
     this.clients.push(client);
 

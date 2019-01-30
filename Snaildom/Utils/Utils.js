@@ -16,14 +16,16 @@ const utils = {
   ucfirst: function(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
   },
-  parse: function(json) {
+  parse: function(json, def) {
     if(typeof json == 'object')
       return json;
+    if(def === undefined)
+      def = false;
 
     try {
       json = JSON.parse(json);
     } catch(e) {
-      json = false;
+      json = def;
     }
 
     return json;

@@ -37,7 +37,7 @@ class Handler extends Manager {
       const handler = this.loader.storage[i];
       const results = handler.packets[packet];
 
-      if(results && results.length)
+      if(results && results.length > 0)
         handlers = [...handlers, ...results];
     }
 
@@ -73,7 +73,7 @@ class Handler extends Manager {
 
       for(var i in this.packets[name]) {
         const handler = this.packets[name][i];
-        
+
         if(handler.func == func)  {
           this.packets[name].splice(i, 1);
 
