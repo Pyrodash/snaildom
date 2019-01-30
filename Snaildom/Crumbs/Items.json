@@ -1,0 +1,591 @@
+{
+  "glasses": {
+    "id": "glasses",
+    "name": "Shades",
+    "cost": "100",
+    "type": "head",
+    "internal": "1"
+  },
+  "browngirlhair": {
+    "id": "browngirlhair",
+    "name": "Brown Hair",
+    "cost": "100",
+    "type": "head",
+    "internal": "2"
+  },
+  "afro": {
+    "id": "afro",
+    "name": "Afro",
+    "cost": "100",
+    "type": "head",
+    "internal": "3"
+  },
+  "toblerone": {
+    "id": "toblerone",
+    "name": "Normal Toblerone",
+    "cost": "100",
+    "type": "hand",
+    "internal": "4"
+  },
+  "meanbrows": {
+    "id": "meanbrows",
+    "name": "Angry Eyebrows",
+    "cost": "100",
+    "type": "face",
+    "internal": "5"
+  },
+  "fairywings": {
+    "id": "fairywings",
+    "name": "Fairy Wings",
+    "cost": "100",
+    "type": "body",
+    "internal": "6"
+  },
+  "dsghqcap": {
+    "id": "dsghqcap",
+    "name": "DSGHQ Cap",
+    "cost": "100",
+    "type": "head",
+    "internal": "7"
+  },
+  "spikeyhair": {
+    "id": "spikeyhair",
+    "name": "Sunhat",
+    "cost": "100",
+    "type": "head",
+    "internal": "25"
+  },
+  "spikeyhair2": {
+    "id": "spikeyhair2",
+    "name": "Spikey Hair",
+    "cost": "100",
+    "type": "head",
+    "internal": "9"
+  },
+  "spikeyhair3": {
+    "id": "spikeyhair3",
+    "name": "Spikey Hair",
+    "cost": "100",
+    "type": "head",
+    "internal": "10"
+  },
+  "spikeyhair4": {
+    "id": "spikeyhair4",
+    "name": "Spikey Hair",
+    "cost": "100",
+    "type": "head",
+    "internal": "11"
+  },
+  "spikeyhair5": {
+    "id": "spikeyhair5",
+    "name": "Spikey Hair",
+    "cost": "100",
+    "type": "head",
+    "internal": "12"
+  },
+  "ayer": {
+    "id": "ayer",
+    "name": "Charming Hair",
+    "cost": "100",
+    "type": "head",
+    "internal": "13"
+  },
+  "catears": {
+    "id": "catears",
+    "name": "Cat Headband",
+    "cost": "100",
+    "type": "head",
+    "internal": "14"
+  },
+  "icetiara": {
+    "id": "icetiara",
+    "name": "Ice Tiara",
+    "cost": "100",
+    "type": "head",
+    "internal": "15"
+  },
+  "magicwand": {
+    "id": "magicwand",
+    "name": "Magic Wand",
+    "cost": "100",
+    "type": "toy",
+    "internal": "16"
+  },
+  "wisehat": {
+    "id": "wisehat",
+    "name": "Wise Hat",
+    "cost": "100",
+    "type": "head",
+    "internal": "17"
+  },
+  "wisebeard": {
+    "id": "wisebeard",
+    "name": "Wise Beard",
+    "cost": "100",
+    "type": "face",
+    "internal": "18"
+  },
+  "healerhat": {
+    "id": "healerhat",
+    "name": "Healer's Hat",
+    "cost": "100",
+    "type": "head",
+    "internal": "19"
+  },
+  "3dglasses": {
+    "id": "3dglasses",
+    "name": "3D Glasses",
+    "cost": "100",
+    "type": "face",
+    "internal": "20"
+  },
+  "nerdglasses": {
+    "id": "nerdglasses",
+    "name": "Nerdy Glasses",
+    "cost": "100",
+    "type": "face",
+    "internal": "21"
+  },
+  "minxyshades": {
+    "id": "minxyshades",
+    "name": "Minxy Shades",
+    "cost": "100",
+    "type": "face",
+    "internal": "22"
+  },
+  "moustache": {
+    "id": "moustache",
+    "name": "Moustache",
+    "cost": "100",
+    "type": "face",
+    "internal": "23"
+  },
+  "bunnyears": {
+    "id": "bunnyears",
+    "name": "Bunny Ears",
+    "cost": "100",
+    "type": "head",
+    "internal": "24"
+  },
+  "microphone": {
+    "id": "microphone",
+    "name": "Microphone",
+    "cost": "100",
+    "type": "toy",
+    "internal": "26"
+  },
+  "purplepompoms": {
+    "id": "purplepompoms",
+    "name": "Purple Pompoms",
+    "cost": "100",
+    "type": "toy",
+    "internal": "27"
+  },
+  "bluepompoms": {
+    "id": "bluepompoms",
+    "name": "Blue Pompoms",
+    "cost": "100",
+    "type": "toy",
+    "internal": "28"
+  },
+  "greencane": {
+    "id": "greencane",
+    "name": "Green Cane",
+    "cost": "100",
+    "type": "toy",
+    "internal": "29"
+  },
+  "redcane": {
+    "id": "redcane",
+    "name": "Red Cane",
+    "cost": "100",
+    "type": "toy",
+    "internal": "30"
+  },
+  "yellowcane": {
+    "id": "yellowcane",
+    "name": "Yellow Cane",
+    "cost": "100",
+    "type": "toy",
+    "internal": "31"
+  },
+  "bluecane": {
+    "id": "bluecane",
+    "name": "Blue Cane",
+    "cost": "100",
+    "type": "toy",
+    "internal": "32"
+  },
+  "squidlord": {
+    "id": "squidlord",
+    "name": "Squidlord Disguise",
+    "cost": "100",
+    "type": "face",
+    "internal": "33"
+  },
+  "sparklytophat": {
+    "id": "sparklytophat",
+    "name": "Sparkly Tophat",
+    "cost": "100",
+    "type": "head",
+    "internal": "34"
+  },
+  "cyantophat": {
+    "id": "cyantophat",
+    "name": "Cyan Tophat",
+    "cost": "100",
+    "type": "head",
+    "internal": "35"
+  },
+  "yellowtophat": {
+    "id": "yellowtophat",
+    "name": "Yellow Tophat",
+    "cost": "100",
+    "type": "head",
+    "internal": "36"
+  },
+  "pinktophat": {
+    "id": "pinktophat",
+    "name": "Pink Tophat",
+    "cost": "100",
+    "type": "head",
+    "internal": "37"
+  },
+  "redtophat": {
+    "id": "redtophat",
+    "name": "Red Tophat",
+    "cost": "100",
+    "type": "head",
+    "internal": "38"
+  },
+  "greentophat": {
+    "id": "greentophat",
+    "name": "Green Tophat",
+    "cost": "100",
+    "type": "head",
+    "internal": "39"
+  },
+  "redflophat": {
+    "id": "redflophat",
+    "name": "Winter Hat",
+    "cost": "100",
+    "type": "head",
+    "internal": "40"
+  },
+  "propellor": {
+    "id": "propellor",
+    "name": "Propellor Cap",
+    "cost": "100",
+    "type": "head",
+    "internal": "41"
+  },
+  "mrbeansteddy": {
+    "id": "mrbeansteddy",
+    "name": "Mr Bean's Teddy",
+    "cost": "100",
+    "type": "toy",
+    "internal": "42"
+  },
+  "peach": {
+    "id": "peach",
+    "name": "Peach Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "43"
+  },
+  "bowtie": {
+    "id": "bowtie",
+    "name": "Bowtie Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "44"
+  },
+  "lime": {
+    "id": "lime",
+    "name": "Lime Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "45"
+  },
+  "darkgreen": {
+    "id": "darkgreen",
+    "name": "Dark Green Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "46"
+  },
+  "ocean": {
+    "id": "ocean",
+    "name": "Ocean Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "47"
+  },
+  "purpledotty": {
+    "id": "purpledotty",
+    "name": "Purple Dotty Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "48"
+  },
+  "blue": {
+    "id": "blue",
+    "name": "Blue Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "49"
+  },
+  "green": {
+    "id": "green",
+    "name": "Green Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "50"
+  },
+  "brown": {
+    "id": "brown",
+    "name": "Brown Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "51"
+  },
+  "yellow": {
+    "id": "yellow",
+    "name": "Yellow Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "52"
+  },
+  "cyan": {
+    "id": "cyan",
+    "name": "Cyan Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "53"
+  },
+  "snellie": {
+    "id": "snellie",
+    "name": "Snellie Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "54"
+  },
+  "pink": {
+    "id": "pink",
+    "name": "Pink Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "55"
+  },
+  "purple": {
+    "id": "purple",
+    "name": "Purple Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "56"
+  },
+  "red": {
+    "id": "red",
+    "name": "Red Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "57"
+  },
+  "orange": {
+    "id": "orange",
+    "name": "Orange Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "58"
+  },
+  "leopard": {
+    "id": "leopard",
+    "name": "Leopard Shell",
+    "cost": "100",
+    "type": "shell",
+    "internal": "59"
+  },
+  "drakebanner": {
+    "id": "drakebanner",
+    "name": "House Drake Banner",
+    "cost": "100",
+    "type": "body",
+    "internal": "60"
+  },
+  "stagsbanner": {
+    "id": "stagsbanner",
+    "name": "Trash",
+    "cost": "0",
+    "type": "body",
+    "internal": "61"
+  },
+  "wolfbanner": {
+    "id": "wolfbanner",
+    "name": "House Wolf Banner",
+    "cost": "100",
+    "type": "body",
+    "internal": "62"
+  },
+  "skeletonbanner": {
+    "id": "skeletonbanner",
+    "name": "House Skeleton Banner",
+    "cost": "100",
+    "type": "body",
+    "internal": "63"
+  },
+  "kacketbanner": {
+    "id": "kacketbanner",
+    "name": "House Kacket Banner",
+    "cost": "100",
+    "type": "body",
+    "internal": "64"
+  },
+  "saber_yellow": {
+    "id": "saber_yellow",
+    "name": "Yellow Saber",
+    "cost": "0",
+    "type": "toy",
+    "internal": "65"
+  },
+  "saber_red": {
+    "id": "saber_red",
+    "name": "Red Saber",
+    "cost": "0",
+    "type": "toy",
+    "internal": "66"
+  },
+  "saber_green": {
+    "id": "saber_green",
+    "name": "Green Saber",
+    "cost": "0",
+    "type": "toy",
+    "internal": "67"
+  },
+  "saber_blue": {
+    "id": "saber_blue",
+    "name": "Blue Saber",
+    "cost": "0",
+    "type": "toy",
+    "internal": "68"
+  },
+  "sword": {
+    "id": "sword",
+    "name": "Sword",
+    "cost": "1000",
+    "forge": {
+      "iron": "30",
+      "silver": "5",
+      "gold": "0"
+    },
+    "type": "toy",
+    "isSword": "1",
+    "internal": "69"
+  },
+  "soccer": {
+    "id": "soccer",
+    "name": "Soccer Ball",
+    "cost": "0",
+    "type": "toy",
+    "internal": "70"
+  },
+  "greenpompoms": {
+    "id": "greenpompoms",
+    "name": "Green Pompoms",
+    "cost": "0",
+    "type": "toy",
+    "internal": "71"
+  },
+  "redpompoms": {
+    "id": "redpompoms",
+    "name": "Red Pompoms",
+    "cost": "0",
+    "type": "toy",
+    "internal": "72"
+  },
+  "teamgreen": {
+    "id": "teamgreen",
+    "name": "Team Green",
+    "cost": "0",
+    "type": "toy",
+    "internal": "73"
+  },
+  "teamred": {
+    "id": "teamred",
+    "name": "Team Red",
+    "cost": "0",
+    "type": "toy",
+    "internal": "74"
+  },
+  "silver": {
+    "id": "silver",
+    "name": "Silver Shell",
+    "cost": "100",
+    "forge": {
+      "iron": "0",
+      "silver": "50",
+      "gold": "0"
+    },
+    "type": "shell",
+    "internal": "75"
+  },
+  "knighthelmet": {
+    "id": "knighthelmet",
+    "name": "Knight Helmet",
+    "cost": "300",
+    "forge": {
+      "iron": "50",
+      "silver": "0",
+      "gold": "0"
+    },
+    "type": "head",
+    "internal": "76"
+  },
+  "crown": {
+    "id": "crown",
+    "name": "Royal Crown",
+    "cost": "500",
+    "forge": {
+      "iron": "5",
+      "silver": "10",
+      "gold": "30"
+    },
+    "type": "head",
+    "internal": "77"
+  },
+  "ironvikinghelmet": {
+    "id": "ironvikinghelmet",
+    "name": "Iron Viking Helmet",
+    "cost": "300",
+    "forge": {
+      "iron": "30",
+      "silver": "0",
+      "gold": "0"
+    },
+    "type": "head",
+    "internal": "78"
+  },
+  "silvervikinghelmet": {
+    "id": "silvervikinghelmet",
+    "name": "Silver Viking Helmet",
+    "cost": "400",
+    "forge": {
+      "iron": "5",
+      "silver": "25",
+      "gold": "0"
+    },
+    "type": "head",
+    "internal": "79"
+  },
+  "goldvikinghelmet": {
+    "id": "goldvikinghelmet",
+    "name": "Gold Viking Helmet",
+    "cost": "500",
+    "forge": {
+      "iron": "0",
+      "silver": "0",
+      "gold": "30"
+    },
+    "type": "head",
+    "internal": "80"
+  }
+}

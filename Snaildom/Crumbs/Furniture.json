@@ -1,0 +1,198 @@
+{
+  "crate": {
+    "id": "crate",
+    "name": "Crate",
+    "cost": "100",
+    "type": "item",
+    "internal": "6"
+  },
+  "fireplace": {
+    "id": "fireplace",
+    "name": "Fireplace",
+    "cost": "100",
+    "type": "item",
+    "internal": "2"
+  },
+  "woodenchair": {
+    "id": "woodenchair",
+    "name": "Wooden Chair",
+    "cost": "100",
+    "type": "item",
+    "internal": "3"
+  },
+  "thronesbench": {
+    "id": "thronesbench",
+    "name": "Bench",
+    "cost": "100",
+    "type": "item",
+    "internal": "4"
+  },
+  "spikewallhanging": {
+    "id": "spikewallhanging",
+    "name": "Wall Hanging",
+    "cost": "100",
+    "type": "item",
+    "internal": "5"
+  },
+  "walltv": {
+    "id": "walltv",
+    "name": "Wall TV",
+    "cost": "100",
+    "type": "item",
+    "internal": "7"
+  },
+  "plant1": {
+    "id": "plant1",
+    "name": "Plant",
+    "cost": "100",
+    "type": "item",
+    "internal": "8"
+  },
+  "plant2": {
+    "id": "plant2",
+    "name": "Plant",
+    "cost": "100",
+    "type": "item",
+    "internal": "9"
+  },
+  "plant3": {
+    "id": "plant3",
+    "name": "Plant",
+    "cost": "100",
+    "type": "item",
+    "internal": "10"
+  },
+  "lamp": {
+    "id": "lamp",
+    "name": "Lamp",
+    "cost": "100",
+    "type": "item",
+    "internal": "11"
+  },
+  "officetable": {
+    "id": "officetable",
+    "name": "Office Table",
+    "cost": "100",
+    "type": "item",
+    "internal": "12"
+  },
+  "yellowrug": {
+    "id": "yellowrug",
+    "name": "Yellow Rug",
+    "cost": "100",
+    "type": "item",
+    "internal": "13"
+  },
+  "purplerug": {
+    "id": "purplerug",
+    "name": "Purple Rug",
+    "cost": "100",
+    "type": "item",
+    "internal": "14"
+  },
+  "pinetorch": {
+    "id": "pinetorch",
+    "name": "Torch",
+    "cost": "100",
+    "type": "item",
+    "internal": "15"
+  },
+  "drumstool": {
+    "id": "drumstool",
+    "name": "Drum Stool",
+    "cost": "100",
+    "type": "item",
+    "internal": "16"
+  },
+  "speakers": {
+    "id": "speakers",
+    "name": "Wall Speakers",
+    "cost": "100",
+    "type": "item",
+    "internal": "17"
+  },
+  "lavalamp": {
+    "id": "lavalamp",
+    "name": "Lava Lamp",
+    "cost": "100",
+    "type": "item",
+    "internal": "18"
+  },
+  "piano": {
+    "id": "piano",
+    "name": "piano",
+    "cost": "100",
+    "type": "item",
+    "internal": "19"
+  },
+  "floorspeakers": {
+    "id": "floorspeakers",
+    "name": "Speakers",
+    "cost": "100",
+    "type": "item",
+    "internal": "20"
+  },
+  "poster": {
+    "id": "poster",
+    "name": "Epic Poster Collection",
+    "cost": "100",
+    "type": "item",
+    "internal": "21"
+  },
+  "poster2": {
+    "id": "poster2",
+    "name": "Event Poster Collection",
+    "cost": "100",
+    "type": "item",
+    "internal": "22"
+  },
+  "woodentable": {
+    "id": "woodentable",
+    "name": "Wooden Table",
+    "cost": "100",
+    "type": "item",
+    "internal": "23"
+  },
+  "bolder": {
+    "id": "bolder",
+    "name": "Boulder",
+    "cost": "100",
+    "type": "item",
+    "internal": "24"
+  },
+  "log": {
+    "id": "log",
+    "name": "Log",
+    "cost": "100",
+    "type": "item",
+    "internal": "25"
+  },
+  "campfire": {
+    "id": "campfire",
+    "name": "Campfire",
+    "cost": "100",
+    "type": "item",
+    "internal": "26"
+  },
+  "blackcouch": {
+    "id": "blackcouch",
+    "name": "Black Couch",
+    "cost": "100",
+    "type": "item",
+    "internal": "27"
+  },
+  "greencouch": {
+    "id": "greencouch",
+    "name": "Green Couch",
+    "cost": "100",
+    "type": "item",
+    "internal": "28"
+  },
+  "peachcouch": {
+    "id": "peachcouch",
+    "name": "Peach Couch",
+    "cost": "100",
+    "type": "item",
+    "internal": "29"
+  }
+}

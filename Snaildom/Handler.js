@@ -1,0 +1,38 @@
+'use strict';
+
+const logger = require('./Utils/Logger');
+
+class Handler {
+  constructor(world) {
+    this.world = world;
+    this.server = world.server;
+    this.database = world.database;
+    this.roomManager = world.roomManager;
+
+    this.packets = {};
+  }
+
+  register(action, handler) {
+    if(!this.packets[action])
+      this.packets[action] = [];
+
+    if(this.packets[action].constructor !== Array)
+      this.packets[action] = [this.packets[action]];
+
+    if(!handler)
+      return;
+
+    if(typeof handler == 'string') {
+      if(this[handler] && typeof this[handler] == 'function')
+        handler = this[handler].bind(this);
+      else
+        return logger.warn('Function ' + handler + ' was not found for a handler.');
+    }
+
+    if(typeof handler == 'function') {
+      this.packets[action].push(handler);
+    }
+  }
+}
+
+module.exports = Handler;

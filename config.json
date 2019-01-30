@@ -1,0 +1,15 @@
+{
+  "host": "localhost",
+  "servers": {
+    "1": {
+      "name": "Snaildom",
+      "port": 5600
+    }
+  },
+  "database": {
+    "host": "127.0.0.1",
+    "user": "root",
+    "password": "",
+    "database": "snaildom2"
+  }
+}
