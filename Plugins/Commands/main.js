@@ -12,7 +12,10 @@ class Commands extends Plugin {
     this.commands = {
       'gg': 'handleGiveGold',
       'gt': 'handleGiveTitle',
-      'gc': 'handleGiveColor'
+      'gc': 'handleGiveColor',
+      'jr': 'handleJoinRoom',
+      'rejoin': 'handleRejoin',
+      'revive': 'handleRevive'
     };
     this.prefix = this.get('prefix') || '/';
 
@@ -37,6 +40,41 @@ class Commands extends Plugin {
       func: handler,
       flags: flags
     });
+  }
+
+  unregister(name, func) {
+    if(!name)
+      return;
+
+    var handlers = this.commands[name];
+
+    if(!func)
+      return this.commands[name] = [];
+
+    if(handlers) {
+      if(handlers.constructor !== Array) {
+        handlers = [handlers];
+
+        this.commands[name] = handlers;
+      }
+
+      for(var i in handlers) {
+        const handler = handlers[i];
+        const remove = () => {
+          this.commands[name].splice(i, 1);
+        };
+
+        switch(typeof handler) {
+          case 'function':
+            if(handler === func)
+              return remove();
+          break;
+          case 'object':
+            if(handler.func === func)
+              return remove();
+        }
+      }
+    }
   }
 
   processMessage(data, client) {
@@ -186,6 +224,33 @@ class Commands extends Plugin {
           });
         }
       }
+    }
+  }
+
+  handleJoinRoom(data, client) {
+    const room = data.shift();
+
+    client.joinRoom(room);
+  }
+
+  handleRejoin(data, client) {
+    client.joinRoom(client.room);
+  }
+
+  handleRevive(data, client) {
+    if(client.rank > 2) {
+      const user = data.join(' ');
+
+      this.database.updateColumn(user, 'Dead', 0).then(res => {
+        if(res > 0)
+          client.alert('Revived ' + user + ' successfully.');
+        else
+          client.alert('User ' + user + ' was not found.');
+      }).catch(err => {
+        logger.error(err);
+
+        client.alert('An error occured. Please contact a server administrator.', 'warning');
+      });
     }
   }
 }

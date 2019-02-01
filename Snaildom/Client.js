@@ -6,11 +6,15 @@ const utils        = require('./Utils/Utils');
 const EventManager = require('./Utils/EventManager');
 
 class Client extends EventManager {
-  constructor(socket, server) {
+  constructor(socket, server, dummy) {
     super();
 
     this.socket = socket;
     this.server = server;
+    this.dummy  = dummy || false;
+
+    if(this.socket)
+      this.ip = this.socket.remoteAddress;
 
     this.world = server.world;
     this.database = this.world.database;
@@ -49,6 +53,9 @@ class Client extends EventManager {
   }
 
   __registerEvents() {
+    if(this.dummy)
+      return;
+
     if(this.socket) {
       this.socket.on('data', data => {
         const packets = data.toString('utf8').split('\0');

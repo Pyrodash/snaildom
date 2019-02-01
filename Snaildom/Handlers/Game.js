@@ -33,8 +33,9 @@ class Game extends Handler {
         if(typeof handler == 'function')
           handler(data, client);
       } else
-        logger.warn('Player ' + client.id + ':' + client.username + ' is playing an unknown game. ID: ' + client.room.id);
-    }
+        logger.warn('Player ' + client.getTag() + ' is playing an unknown game. ID: ' + client.room.id);
+    } else if(client.game)
+      client.game.processUpdate(data, client);
   }
 
   handleMarksman(data, client) {

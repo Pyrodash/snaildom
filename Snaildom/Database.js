@@ -94,6 +94,16 @@ class Database {
   createShell(shell) {
     return this.knex('shells').insert(shell).catch(logger.error);
   }
+
+  getBan(where) {
+    if(typeof where != 'object')
+      where = {User: where};
+
+    return this.knex('bans').first('*').where({
+      ...where,
+      Active: 1
+    }).orderBy('ID', 'desc');
+  }
 }
 
 module.exports = Database;

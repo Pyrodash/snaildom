@@ -8,6 +8,7 @@ Snaildom Rewritten is a server emulator for DamenSpike/Sauron's Snaildom.
 - Adding/Blocking users
 - Inventory
 - Chatting w/ basic commands
+- Extensible Plugin System
 ## TODO
 - Make a TODO list
 

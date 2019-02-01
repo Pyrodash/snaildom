@@ -16,6 +16,8 @@ class Gold extends Dependency {
   }
 
   removeGold(amt, notify) {
+    if(amt == 0)
+      notify = false;
     if(notify != false)
       notify = true;
 

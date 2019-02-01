@@ -22,6 +22,8 @@ class World extends EventEmitter {
     this.reloadDatabase();
 
     this.server = server;
+    this.creationDate = new Date(1546275936813);
+    this.era = config.era || {suffix: '', prefix: '', name: 'Beta Era'};
 
     this.cli = new CLI;
     this.cli.register('reload database', this.reloadDatabase.bind(this));
@@ -43,6 +45,11 @@ class World extends EventEmitter {
     if(data == '<policy-file-request/>')
       return client.write('<cross-domain-policy><allow-access-from domain="*.' + (config.host || 'localhost') + '" to-ports="*" /></cross-domain-policy>');
 
+    const now = new Date().getTime();
+    
+    if(client.isDead() && (!client.deathTime || (now - client.deathTime) > 5000))
+      return logger.warn('Received packet from dead client ' + client.username + ': ' + data);
+
     var packet = data.slice(1);
 
     if(packet.charAt(packet.length - 1) == '@')
@@ -52,6 +59,9 @@ class World extends EventEmitter {
 
     var header = packet.shift();
     var footer = packet.pop();
+
+    if(!header || !footer)
+      return;
 
     var keyword = [header.substr(0, 3), footer.substr(0, 3)];
 
@@ -123,6 +133,31 @@ class World extends EventEmitter {
     }
 
     return false;
+  }
+
+  getEra() {
+    const days = Math.floor(this.creationDate/8.64e7) + 1;
+
+    return {
+      days: days,
+      start: this.creationDate.getTime() / 1000,
+      prefix: this.era.prefix,
+      name: this.era.name,
+      suffix: this.era.suffix
+    };
+  }
+
+  getVillage() {
+    const shells = [];
+    const clients = this.server.clients;
+
+    for(var i in clients) {
+      const client = clients[i];
+
+      shells.push(client.build());
+    }
+
+    return shells;
   }
 }
 

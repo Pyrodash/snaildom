@@ -3,7 +3,7 @@
 const Dependency = require('../Dependency');
 
 class Room extends Dependency {
-  joinRoom(room) {
+  joinRoom(room, x, y, frame) {
     if(typeof room == 'string' && room.startsWith('shell_')) {
       var owner = Number(room.split('shell_').pop());
 
@@ -18,20 +18,20 @@ class Room extends Dependency {
     }
 
     if(typeof room == 'object' && room.add && typeof room.add == 'function')
-      return room.add(this);
+      return room.add(this, x, y, frame);
 
     if(!room)
-      return this.roomManager.random().add(this);
+      return this.roomManager.random().add(this, x, y, frame);
 
     room = this.roomManager.find(room);
 
     if(room)
-      room.add(this);
+      room.add(this, x, y, frame);
     else {
       if(this.room)
-        this.room.add(this);
+        this.room.add(this, x, y, frame);
       else
-        this.roomManager.random().add(this);
+        this.roomManager.random().add(this, x, y, frame);
     }
   }
 }

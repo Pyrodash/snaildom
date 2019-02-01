@@ -135,7 +135,7 @@ class Plugin extends EventManager {
         break;
         case 'commands':
           const commands = this.plugins.find('commands');
-
+          
           if(commands)
             commands.registerCommand(name, func, flags);
       }
