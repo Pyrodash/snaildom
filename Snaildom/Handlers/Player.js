@@ -16,14 +16,8 @@ class Player extends Handler {
 
     // Not sure what false callback is..
 
-    if(utils.isNumber(frame)) {
-      client.frame = Number(frame);
-
-      client.room.send('frame', {
-        id: client.id,
-        frame: frame
-      }, client);
-    }
+    if(utils.isNumber(frame))
+      client.setFrame(frame, true);
   }
 
   handleEquip(data, client) {

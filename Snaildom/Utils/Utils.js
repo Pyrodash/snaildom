@@ -1,6 +1,16 @@
 const latinMap = require('./LatinMap');
+const nargs = /\{([0-9a-zA-Z._]+)\}/g;
+
+function padLeft(num, base, chr) {
+  var len = (String(base || 10).length - String(num).length) + 1;
+
+  return len > 0 ? new Array(len).join(chr || '0') + num : num;
+}
 
 const utils = {
+  rand: function(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  },
   require: function(mdl, def) {
     if(def === undefined)
       def = false;
@@ -56,6 +66,14 @@ const utils = {
 
     return newStr;
   },
+  escapeHTML: function(str) {
+    return str
+     .replace(/&/g, "&amp;")
+     .replace(/</g, "&lt;")
+     .replace(/>/g, "&gt;")
+     .replace(/"/g, "&quot;")
+     .replace(/'/g, "&#039;");
+  },
   parseFurniture: function(furniture) {
     return furniture.split('|').filter(o => o).map(object => {
       object = object.split(':');
@@ -71,6 +89,63 @@ const utils = {
   },
   furnitureToString: function(furn) {
     return furn.map(item => [item.id, item.x, item.y, (item.frame || 1), (item.frame2 || 1)].join(':')).join('|');
+  },
+  format: function(string) {
+    // Credits to https://github.com/Matt-Esch/
+
+    var args;
+
+    if(arguments.length === 2 && typeof arguments[1] === "object")
+      args = arguments[1];
+    else {
+      args = new Array(arguments.length - 1);
+
+      for (var i = 1; i < arguments.length; ++i) {
+        args[i - 1] = arguments[i];
+      }
+    }
+
+    if (!args || !args.hasOwnProperty)
+      args = {};
+
+    return string.replace(nargs, function replaceArg(match, i, index) {
+      var result;
+
+      if(string[index - 1] === "{" && string[index + match.length] === "}")
+        return i;
+      else {
+        const params = i.split('.');
+        result = args;
+
+        for(var n in params) {
+          const param = params[n];
+
+          if(result.hasOwnProperty(param))
+            result = result[param];
+          else {
+            result = null;
+
+            break;
+          }
+        }
+
+        if(result === null || result === undefined)
+          return '';
+
+        return result;
+      }
+    });
+  },
+  logDate: function(date) {
+    if(!date)
+      date = new Date();
+
+    return [padLeft(d.getMonth()+1),
+             padLeft(d.getDate()),
+             d.getFullYear()].join('-') + ' ' +
+            [padLeft(d.getHours()),
+             padLeft(d.getMinutes()),
+             padLeft(d.getSeconds())].join(':');
   }
 };
 

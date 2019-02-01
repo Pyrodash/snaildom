@@ -47,7 +47,7 @@ class Room extends EventEmitter {
     }, ignored);
   }
 
-  add(client, x, y) {
+  add(client, x, y, frame) {
     if(client.room) {
       client.lastRoom = client.room;
 
@@ -57,7 +57,7 @@ class Room extends EventEmitter {
     client.x = utils.parseInt(x);
     client.y = utils.parseInt(y);
 
-    client.frame = 1;
+    client.frame = utils.parseInt(frame, 1);
     client.score = 0;
     client.room  = this;
     client.roomJoin = new Date().getTime();
@@ -89,8 +89,7 @@ class Room extends EventEmitter {
 
   build() {
     const players = this.clients.map(client => client.build()) || [];
-
-    return {
+    var   build = {
       id: this.displayID,
       name: this.name,
       isGame: this.isGame,
@@ -98,6 +97,38 @@ class Room extends EventEmitter {
       nullGame: this.nullGame,
       players: players
     };
+
+    if(this.customBuild) {
+      const customBuild = {};
+
+      for(var i in this.customBuild) {
+        const prop = this.customBuild[i];
+
+        this.parseProp(i, prop, customBuild);
+      }
+
+      build = {...build, ...customBuild};
+    }
+
+    return build;
+  }
+
+  parseProp(key, prop, location) {
+    if(typeof prop == 'function')
+      location[key] = prop(this);
+    else if(typeof prop == 'object') {
+      for(var i in prop) {
+        parseProp(key, prop[i], location);
+      }
+    } else {
+      switch(key) {
+        case 'get':
+          location[key] = this[prop];
+        break;
+        default:
+          location[key] = prop;
+      }
+    }
   }
 }
 

@@ -1,6 +1,25 @@
 // A E S T H E T I C S
 
+const utils  = require('./Utils');
 const colors = require('colors');
+const path   = require('path');
+const fs     = require('fs');
+
+const cache  = [];
+
+setInterval(() => {
+  const worldID = process.argv[2];
+  const location = path.join(__dirname, '..', 'Logs', 'world-' + worldID + '.txt');
+  
+  fs.writeFile(location, cache.join('\n') + '\n', 'utf8', err => {
+    if(err) {
+      console.warn('Failed to save logs. What the fuck!');
+      console.error(err);
+    } else
+      cache = [];
+  });
+}, 5 * 1000 * 60);
+// Run save loop every 5 minutes
 
 const logger = {
   format: function(level, data, prefix, color) {
@@ -19,6 +38,12 @@ const logger = {
 
     return msg;
   },
+  save: function(data) {
+    const date = utils.logDate();
+    data = '[' + date + ']  ' + data;
+
+    cache.push(data);
+  },
   write: function(data, prefix) {
     data = logger.format('info', data, prefix, 'green');
 
@@ -28,6 +53,7 @@ const logger = {
     data = logger.format('warning', data, prefix, 'yellow');
 
     console.log(data);
+    logger.save(data);
   },
   error: function(data, prefix) {
     if(data.stack)
@@ -36,9 +62,13 @@ const logger = {
     data = logger.format('error', data, prefix, 'red');
 
     console.log(data);
+    logger.save(data);
   },
   fatal: function(data, shutdown, alert, prefix) {
-    logger.error(data);
+    data = logger.format('fatal', data, prefix, 'red');
+
+    console.log(data);
+    logger.save(data);
 
     if(typeof shutdown == 'string') {
       prefix = shutdown;
@@ -48,9 +78,8 @@ const logger = {
     }
 
     if(shutdown !== false) {
-      if(alert !== false) {
+      if(alert !== false)
         logger.warn('Server shutting down...');
-      }
 
       process.exit();
     }

@@ -13,6 +13,7 @@ class Core extends Dependency {
     this.y = 0;
     this.frame = 1;
     this.pushFrame = 0;
+    this.dead = false;
 
     this.requests = {
       inbound: [],
@@ -21,6 +22,8 @@ class Core extends Dependency {
   }
 
   write(data) {
+    if(this.dummy)
+      return;
     if(typeof data == 'object')
       data = JSON.stringify(data);
 
@@ -45,15 +48,25 @@ class Core extends Dependency {
     if(!code)
       code = 'none';
 
-    this.write({
-      msg: "error",
-      params: {
-        error: code
-      }
+    this.send('error', {
+      error: code
     });
 
     if(disconnect == true)
       this.disconnect();
+  }
+
+  fatal(msg, disconnect) {
+    if(disconnect != true)
+      disconnect = false;
+
+    this.send('messageerror', {
+      message: msg,
+      dc: disconnect
+    });
+
+    if(disconnect)
+      setTimeout(this.disconnect.bind(this), 5000); // Auto dc if the client doesn't
   }
 
   get(key) {
@@ -84,7 +97,7 @@ class Core extends Dependency {
     this.color = Player.Color || null;
     this.subtitle = Player.Subtitle || null;
 
-    this.rank = Number(Player.Rank);
+    this.rank = Number(Player.Rank) || 1;
     this.about = Player.About || null;
 
     this.royal = Number(Player.Royal);
@@ -94,20 +107,30 @@ class Core extends Dependency {
     this.ghost = Number(Player.Ghost);
     this.iceghost = Number(Player.IceGhost);
 
-    this.sessionKey = crypto.snailFeed(Player.SessionKey);
+    this.health = utils.parseInt(Player.Health, 100);
 
-    this.inventory = Player.Inventory.split(',').filter(item => item);
-    this.furniture = Player.Furniture.split(',').filter(item => item);
-    this.factions = this.parseFactions(Player.Factions.split(',').filter(faction => faction));
+    if(Player.SessionKey)
+      this.sessionKey = crypto.snailFeed(Player.SessionKey);
 
-    this.friends = Player.Friends.split(',').filter(f => f).map(f => Number(f));
-    this.blocked = Player.Blocked.split(',').filter(b => b).map(b => Number(b));
+    this.inventory = Player.Inventory ? Player.Inventory.split(',').filter(item => item) : [];
+    this.furniture = Player.Furniture ? Player.Furniture.split(',').filter(item => item) : [];
+    this.factions = Player.Factions ? this.parseFactions(Player.Factions.split(',').filter(faction => faction)) : [];
+
+    this.friends = Player.Friends ? Player.Friends.split(',').filter(f => f).map(f => Number(f)) : [];
+    this.blocked = Player.Blocked ? Player.Blocked.split(',').filter(b => b).map(b => Number(b)) : [];
 
     this.materials = utils.parse(Player.Materials, {
       iron: 0,
       silver: 0,
       gold: 0
     });
+
+    if(!this.materials.iron)
+      this.materials.iron = 0;
+    if(!this.materials.silver)
+      this.materials.silver = 0;
+    if(!this.materials.gold)
+      this.materials.gold = 0;
   }
 
   build(inContainer) {
@@ -143,9 +166,13 @@ class Core extends Dependency {
       ghost: this.ghost,
       iceghost: this.iceghost,
       seat: this.seat || null,
-      dummy: this.dummy,
+      dummy: Number(this.dummy),
       online: this.socket ? true : false
     }
+  }
+
+  getTag() {
+    return this.id + '|' + this.username;
   }
 
   move(x, y) {
@@ -164,13 +191,66 @@ class Core extends Dependency {
     }
   }
 
-  say(msg) {
+  setFrame(frame, ignored) {
+    if(!this.room)
+      return;
+    if(ignored === true)
+      ignored = this;
+
+    this.frame = Number(frame);
+    this.room.send('frame', {
+      id: this.id,
+      frame: frame
+    }, ignored);
+  }
+
+  setPushFrame(frame, ignored) {
+    if(!this.room)
+      return;
+    if(ignored === true)
+      ignored = this;
+
+    this.pushFrame = Number(frame);
+    this.room.send('pushframe', {
+      id: this.id,
+      frame: frame
+    }, ignored);
+  }
+
+  say(msg, ignore) {
+    if(ignore != false)
+      ignore = this;
+    else
+      ignore = null;
+
     if(this.room) {
       this.room.send('chat', {
         id: this.id,
         message: msg
-      }, this);
+      }, ignore);
     }
+  }
+
+  die() {
+    this.health = 0;
+    this.dead = true;
+    this.deathTime = new Date().getTime();
+
+    this.updateColumn('Dead', 1);
+    this.send('death');
+
+    this.disconnect();
+  }
+
+  isDead() {
+    return this.health <= 0 || this.dead;
+  }
+
+  refreshWorld() {
+    this.send('world', {
+      era: this.world.getEra(),
+      village: this.world.getVillage()
+    });
   }
 
   update(col, val) {
@@ -214,7 +294,12 @@ class Core extends Dependency {
           });
         }
       }
+
+      this.friends = null;
     }
+
+    if(this.group)
+      this.group.remove(this);
 
     this.authenticated = false;
   }

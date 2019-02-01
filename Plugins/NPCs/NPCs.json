@@ -1,0 +1,85 @@
+[
+  {
+    "Toy": "sword",
+    "Shell": "yellow",
+    "X": 204.15,
+    "Y": 198,
+    "Username": "Guard",
+    "ID": 99991,
+    "Room": "courtyard"
+  },
+  {
+    "Toy": "sword",
+    "Shell": "yellow",
+    "X": 168.3,
+    "Y": 199.15,
+    "Username": "Royal Guard",
+    "ID": 99992,
+    "Room": "thrones",
+    "Dialogue": {
+      "message": "Greetings Citizen.",
+      "responses": [
+        {
+          "id": 1,
+          "message": "Rumors"
+        },
+        {
+          "id": 2,
+          "message": "Kingdom"
+        },
+        {
+          "id": 3,
+          "message": "Directions"
+        }
+      ]
+    }
+  },
+  {
+    "Toy": "sword",
+    "Shell": "yellow",
+    "X": 590,
+    "Y": 199.15,
+    "Username": "Royal Guard",
+    "ID": 99993,
+    "Room": "thrones",
+    "Dialogue": {
+      "message": "Greetings Citizen.",
+      "responses": [
+        {
+          "id": 1,
+          "message": "Rumors"
+        },
+        {
+          "id": 2,
+          "message": "Kingdom"
+        },
+        {
+          "id": 3,
+          "message": "Directions"
+        }
+      ]
+    }
+  },
+  {
+    "Toy": "hammer",
+    "Shell": "yellow",
+    "X": 368.75,
+    "Y": 361.45,
+    "Username": "Blacksmith",
+    "ID": 99994,
+    "Room": "blacksmith",
+    "Dialogue": {
+      "message": "Welcome to my forge.&break; How can I help you?",
+      "responses": [
+        {
+          "id": 4,
+          "message": "Forging"
+        },
+        {
+          "id": 5,
+          "message": "Ore"
+        }
+      ]
+    }
+  }
+]

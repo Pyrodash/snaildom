@@ -478,7 +478,7 @@
       "gold": "0"
     },
     "type": "toy",
-    "isSword": "1",
+    "isSword": 1,
     "internal": "69"
   },
   "soccer": {

@@ -11,5 +11,10 @@
     "user": "root",
     "password": "",
     "database": "snaildom2"
+  },
+  "era": {
+    "prefix": " &nbsp;&nbsp;&nbsp;",
+    "name": "Beta Era",
+    "suffix": ""
   }
 }
