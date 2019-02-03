@@ -136,9 +136,9 @@ const utils = {
       }
     });
   },
-  logDate: function(date) {
-    if(!date)
-      date = new Date();
+  logDate: function(d) {
+    if(!d)
+      d = new Date();
 
     return [padLeft(d.getMonth()+1),
              padLeft(d.getDate()),

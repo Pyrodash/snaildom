@@ -1,0 +1,23 @@
+<% include Templates/head %>
+<div class="container">
+  <% include Templates/sidebar %>
+  <div class="content">
+    <% include Templates/navbar %>
+    <div class="body">
+      <div class="header">
+        Overview
+      </div>
+      <div class="box overview">
+        <div class="subheader">Information</div>
+        <br>
+        <table cellspacing="0" cellpadding="0">
+          <tr>
+            <td>Memory</td>
+            <td><span class="mono"><%= memory.used %></span> / <span class="mono"><%= memory.total %></span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<% include Templates/foot %>

@@ -49,8 +49,8 @@ class FileLoaderCLI {
       } else
         logger.warn(upperName + ' already loaded.');
     }, true)
-    this.cli.register(this.commands.reload, this.loader.reload.bind(this.loader));
-    this.cli.register(this.commands.refresh, this.loader.loadFiles.bind(this.loader));
+    this.cli.register(this.commands.reload, this.loader.reload.bind(this.loader), true);
+    this.cli.register(this.commands.refresh, this.loader.loadFiles.bind(this.loader), true);
   }
 }
 

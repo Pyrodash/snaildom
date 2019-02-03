@@ -1,0 +1,140 @@
+<% include Templates/head %>
+<div class="container">
+  <% include Templates/sidebar %>
+  <div class="content">
+    <% include Templates/navbar %>
+    <div class="body">
+      <div class="header">
+        <%= Player.Username %>
+      </div>
+      <div class="box user">
+        <i>Contact a server administrator for a list of item/faction IDs.</i>
+        <br><br>
+        <form id="user-edit" method="post">
+          <table cellspacing="0" cellpadding="0">
+            <tr>
+              <td>ID</td>
+              <td><input class="input" type="number" value="<%= Player.ID %>" disabled></td>
+            </tr>
+            <tr>
+              <td>Username</td>
+              <td><input name="Username" class="input" type="text" value="<%= Player.Username %>"></td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td><input name="Password" class="input" type="text" value="<%= Player.Password %>" data-tippy="Passwords are hashed in the BCrypt algorithm. You can enter an unhashed password and it will be automatically hashed on saving."></td>
+            </tr>
+            <tr>
+              <td>LoginKey</td>
+              <td><input name="LoginKey" class="input" type="text" value="<%= Player.LoginKey %>"></td>
+            </tr>
+            <tr>
+              <td>SessionKey</td>
+              <td><input name="SessionKey" class="input" type="text" value="<%= Player.SessionKey %>"></td>
+            </tr>
+            <tr>
+              <td>Head</td>
+              <td><input name="Head" class="input" type="text" value="<%= Player.Head %>"></td>
+            </tr>
+            <tr>
+              <td>Face</td>
+              <td><input name="Face" class="input" type="text" value="<%= Player.Face %>"></td>
+            </tr>
+            <tr>
+              <td>Body</td>
+              <td><input name="Body" class="input" type="text" value="<%= Player.Body %>"></td>
+            </tr>
+            <tr>
+              <td>Toy</td>
+              <td><input name="Toy" class="input" type="text" value="<%= Player.Toy %>"></td>
+            </tr>
+            <tr>
+              <td>Shell</td>
+              <td><input name="Shell" class="input" type="text" value="<%= Player.Shell %>"></td>
+            </tr>
+            <tr>
+              <td>Inventory</td>
+              <td><input name="Inventory" class="input" type="text" value="<%= Player.Inventory %>" data-tippy="Format: item,item,item"></td>
+            </tr>
+            <tr>
+              <!-- Should add a tooltip here -->
+              <td>Factions</td>
+              <td><input name="Factions" class="input" type="text" value="<%= Player.Factions %>" data-tippy="Format: faction id:tier,faction id:tier,faction id:tier"></td>
+            </tr>
+            <tr>
+              <td>Gold</td>
+              <td><input name="Gold" class="input" type="number" value="<%= Player.Gold %>"></td>
+            </tr>
+            <tr>
+              <td>Level</td>
+              <td><input name="Level" class="input" type="number" value="<%= Player.Level %>"></td>
+            </tr>
+            <tr>
+              <td>Exp</td>
+              <td><input name="Exp" class="input" type="number" value="<%= Player.Exp %>"></td>
+            </tr>
+            <tr>
+              <td>Health</td>
+              <td><input name="Health" class="input" type="number" value="<%= Player.Health %>"></td>
+            </tr>
+            <tr>
+              <td>Dead</td>
+              <td><input name="Dead" class="input" type="number" value="<%= Player.Dead %>"></td>
+            </tr>
+            <tr>
+              <td>Materials</td>
+              <td><input name="Materials" class="input" type="text" value="<%= Player.Materials %>" data-tippy="Materials are stored as JSON. Use google for more info"></td>
+            </tr>
+            <tr>
+              <td>Friends</td>
+              <td><input name="Friends" class="input" type="text" value="<%= Player.Friends %>" data-tippy="Format: user id,user id,user id"></td>
+            </tr>
+            <tr>
+              <td>Blocked</td>
+              <td><input name="Blocked" class="input" type="text" value="<%= Player.Blocked %>" data-tippy="Format: user id,user id,user id"></td>
+            </tr>
+            <tr>
+              <td>Color</td>
+              <td><input name="Color" class="input" type="text" value="<%= Player.Color %>"></td>
+            </tr>
+            <tr>
+              <td>Subtitle</td>
+              <td><input name="Subtitle" class="input" type="text" value="<%= Player.Subtitle %>"></td>
+            </tr>
+            <tr>
+              <td>Rank</td>
+              <td><input name="Rank" class="input" type="number" value="<%= Player.Rank %>"></td>
+            </tr>
+            <tr>
+              <td>About</td>
+              <td><input name="About" class="input" type="text" value="<%= Player.About %>"></td>
+            </tr>
+            <tr>
+              <td>Royal</td>
+              <td><input name="Royal" class="input" type="number" value="<%= Player.Royal %>"></td>
+            </tr>
+            <tr>
+              <td>Famous</td>
+              <td><input name="Famous" class="input" type="number" value="<%= Player.Famous %>"></td>
+            </tr>
+            <tr>
+              <td>Knight</td>
+              <td><input name="Knight" class="input" type="number" value="<%= Player.Knight %>"></td>
+            </tr>
+            <tr>
+              <td>Ghost</td>
+              <td><input name="Ghost" class="input" type="number" value="<%= Player.Ghost %>"></td>
+            </tr>
+            <tr>
+              <td>IceGhost</td>
+              <td><input name="IceGhost" class="input" type="number" value="<%= Player.IceGhost %>"></td>
+            </tr>
+          </table>
+          <br><br>
+          <input class="button" type="submit" value="Save">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<% include Templates/foot %>

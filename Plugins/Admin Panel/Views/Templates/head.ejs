@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <title><% if(locals.title) { %><%= title%> / <% } %>Admin Panel</title>
+
+    <meta charset="utf-8">
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+
+    <script src="/assets/js/lib/jquery.min.js"></script>
+    <script src="/assets/js/lib/jquery-ui.min.js"></script>
+    <script src="/assets/js/lib/tippy.all.min.js"></script>
+    <% if(locals.Self) { %>
+    <script src="/assets/js/databaseManager.js"></script>
+    <script src="/assets/js/main.js"></script>
+    <% } %>
+
+    <link rel="stylesheet" href="/assets/css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+  </head>
+  <body>

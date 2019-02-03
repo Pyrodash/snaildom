@@ -5,12 +5,15 @@ const colors = require('colors');
 const path   = require('path');
 const fs     = require('fs');
 
-const cache  = [];
+var cache  = [];
 
 setInterval(() => {
   const worldID = process.argv[2];
   const location = path.join(__dirname, '..', 'Logs', 'world-' + worldID + '.txt');
-  
+
+  if(cache.length == 0)
+    return;
+
   fs.writeFile(location, cache.join('\n') + '\n', 'utf8', err => {
     if(err) {
       console.warn('Failed to save logs. What the fuck!');
