@@ -1,0 +1,78 @@
+<% include Templates/head %>
+<script src="/assets/js/pages/users.js"></script>
+<div class="container">
+  <% include Templates/sidebar %>
+  <div class="content">
+    <% include Templates/navbar %>
+    <div class="body">
+      <div class="header">
+        Users
+      </div>
+      <div class="search">
+        <form>
+          <input type="text" placeholder="search...">
+          <button class="button"><i class="fas fa-search"></i></button>
+        </form>
+      </div>
+      <div class="box">
+        <table class="users">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Edit</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+        <div id="loading">
+          <div class="spinner">
+            <div class="double-bounce1"></div>
+            <div class="double-bounce2"></div>
+          </div>
+        </div>
+      </div>
+      <div class="options">
+        <div class="option">
+          <div class="title">
+            ORDER
+          </div>
+          <div class="selector" id="order">
+            <div data-value="asc" class="selection" data-tippy="Ascending">
+              ASC
+            </div>
+            <div data-value="desc" class="selection active" data-tippy="Descending">
+              DESC
+            </div>
+          </div>
+        </div>
+        <div class="option">
+          <div class="title">
+            LIMIT
+          </div>
+          <div class="selector" id="limit">
+            <div data-value="25" class="selection">
+              25
+            </div>
+            <div data-value="50" class="selection active">
+              50
+            </div>
+            <div data-value="100" class="selection">
+              100
+            </div>
+          </div>
+        </div>
+        <div class="option">
+          <div class="title">
+            OFFSET
+          </div>
+          <div class="selector" id="offset">
+            <input type="number" value="0">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% include Templates/foot %>
