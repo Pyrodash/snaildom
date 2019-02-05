@@ -49,6 +49,7 @@ class AdminPanel extends Plugin {
   }
 
   destroy() {
+    super.destroy();
     this.server.close();
   }
 }

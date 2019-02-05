@@ -1,12 +1,12 @@
 <% include Templates/head %>
-<script src="/assets/js/pages/users.js"></script>
+<script src="/assets/js/pages/logs.js"></script>
 <div class="container">
   <% include Templates/sidebar %>
   <div class="content">
     <% include Templates/navbar %>
     <div class="body">
       <div class="header">
-        Users
+        Logs
       </div>
       <div class="search">
         <div class="container">
@@ -16,20 +16,15 @@
               <button class="button"><i class="fas fa-search"></i></button>
             </form>
           </div>
-          <div class="item">
-            <a href="/user/insert">
-              <button class="button new">+</button>
-            </a>
-          </div>
         </div>
       </div>
       <div class="box">
-        <table class="table users">
+        <table class="table logs">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Username</th>
-              <th>Edit</th>
+              <th>Action</th>
+              <th>Information</th>
+              <th>Time</th>
             </tr>
           </thead>
           <tbody>

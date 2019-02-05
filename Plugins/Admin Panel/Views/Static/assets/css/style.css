@@ -231,22 +231,27 @@ a {
   color: #FD5170;
 }
 
-table.users {
+.table {
   width: 100%;
   border-spacing: 0;
   /*table-layout: fixed;*/
+  border-collapse: collapse;
 }
 
-table.users th {
+.table th {
   padding: 1.2vh;
-  border-bottom: 1px solid lightgrey;
+  border-bottom: 1px solid #ccc;
   text-align: left;
   font-size: 1em;
 }
 
-table.users td {
+.table td {
 	padding: 1.2vh;
 	text-align: left;
+}
+
+.table td a:not(:last-child) {
+  margin-right: 2vh
 }
 
 #loading {
@@ -324,6 +329,12 @@ table.users td {
   margin-bottom: 3vh;
   text-align: right;
 }
+.search .container {
+  justify-content: flex-end;
+}
+.search .container .item:not(:last-child) {
+  margin-right: 0.8vh;
+}
 .search input[type="text"] {
   border: 0;
   padding: 1.2vh;
@@ -337,6 +348,13 @@ table.users td {
   border-color: #0583CA;
 }
 .search button {
+  border-radius: 6px;
+}
+.search button.new {
+  min-width: 4.5vh;
+  font-weight: bold;
+}
+.search form button {
   border-radius: 0 6px 6px 0;
 }
 .search form {
@@ -347,7 +365,6 @@ table.users td {
   display: -ms-flexbox;
   display: -webkit-flex;
   display: flex;
-  justify-content: flex-end;
 }
 
 .options {
@@ -403,4 +420,8 @@ table.users td {
   background: transparent;
   padding: 1.2vh;
   width: 100%;
+}
+
+.removeBtn {
+  color: #F55858;
 }

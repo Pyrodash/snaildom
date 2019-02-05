@@ -1,0 +1,46 @@
+<% include Templates/head %>
+<div class="container">
+  <% include Templates/sidebar %>
+  <div class="content">
+    <% include Templates/navbar %>
+    <div class="body">
+      <div class="box user">
+        <form id="ban-edit" method="post">
+          <table cellspacing="0" cellpadding="0">
+            <% if(!locals.insertMode) { %>
+            <tr>
+              <td>ID</td>
+              <td><input class="input" type="number" value="<%= Ban.ID %>" disabled></td>
+            </tr>
+            <% } %>
+            <tr>
+              <td>User</td>
+              <td><input name="User" class="input" type="text" value="<%= Ban.User %>" data-tippy="This is the banned user. You can enter an ID or a username which will be automatically converted to ID on save."></td>
+            </tr>
+            <tr>
+              <td>Issuer</td>
+              <td><input name="Issuer" class="input" type="text" value="<%= Ban.Issuer %>" data-tippy="You can enter an ID or a username as well."></td>
+            </tr>
+            <tr>
+              <td>Reason</td>
+              <td><input name="Reason" class="input" type="text" value="<%= Ban.Reason %>"></td>
+            </tr>
+            <tr>
+              <td>Length</td>
+              <td><input name="Length" class="input" type="number" value="<%= Ban.Length %>" data-tippy="The length is in hours. 999 is permanent."></td>
+            </tr>
+            <% if(!locals.insertMode) { %>
+            <tr>
+              <td>Date</td>
+              <td><input class="input" type="text" value="<%= Ban.Date %>" disabled></td>
+            </tr>
+            <% } %>
+          </table>
+          <br><br>
+          <input class="button" type="submit" value="Save">
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<% include Templates/foot %>

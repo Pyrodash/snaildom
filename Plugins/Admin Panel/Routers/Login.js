@@ -26,6 +26,9 @@ class Login extends Router {
       return res.send('2');
 
     this.database.getPlayer(username).then(Player => {
+      if(!Player)
+        return res.send('1');
+
       const pass = Player.Password.replace('$2y$', '$2a$');
 
       if(Player.Rank < 3)
@@ -34,7 +37,7 @@ class Login extends Router {
       bcrypt.compare(password, pass, (err, resp) => {
         if(resp === true) {
           req.session.id = Player.ID;
-          
+
           res.send('0');
         } else {
           if(err)

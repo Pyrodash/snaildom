@@ -70,14 +70,26 @@ $(document).ready(function() {
 
   $('.search form').submit(function(e) {
     e.preventDefault();
-    const user = $(this).find('input[type="text"]').val();
+    const val = $(this).find('input[type="text"]').val();
 
-    if(!user) {
-      if(dbManager.search)
-        dbManager.fetchUserList(dbManager.filterUser);
-    } else {
-      if(dbManager.search != user)
-        dbManager.fetchUser(user, dbManager.filterUser);
-    }
+    if(!val)
+      dbManager.fetchList(dbManager.filter);
+    else
+      dbManager.fetchList(val, dbManager.filter);
+  });
+
+  $(document).on('click', '.removeBtn', function(e) {
+    e.preventDefault();
+
+    const url = $(this).prop('href');
+    const row = $(this).closest('tr');
+
+    $.ajax({
+      url,
+      type: 'GET',
+      success: () => {
+        row.remove();
+      }
+    });
   });
 });

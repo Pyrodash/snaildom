@@ -12,10 +12,12 @@
         <br><br>
         <form id="user-edit" method="post">
           <table cellspacing="0" cellpadding="0">
+            <% if(!locals.insertMode) { %>
             <tr>
               <td>ID</td>
               <td><input class="input" type="number" value="<%= Player.ID %>" disabled></td>
             </tr>
+            <% } %>
             <tr>
               <td>Username</td>
               <td><input name="Username" class="input" type="text" value="<%= Player.Username %>"></td>
@@ -57,7 +59,6 @@
               <td><input name="Inventory" class="input" type="text" value="<%= Player.Inventory %>" data-tippy="Format: item,item,item"></td>
             </tr>
             <tr>
-              <!-- Should add a tooltip here -->
               <td>Factions</td>
               <td><input name="Factions" class="input" type="text" value="<%= Player.Factions %>" data-tippy="Format: faction id:tier,faction id:tier,faction id:tier"></td>
             </tr>

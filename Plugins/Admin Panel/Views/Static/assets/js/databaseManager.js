@@ -8,55 +8,86 @@ class DatabaseManager {
     this.order = 'desc';
 
     this.error = this.error.bind(this);
+    this.filter = this.filter.bind(this);
   }
 
-  fetchUserList(filter) {
+  fetchList(where, filter) {
     this.lastAction = {
-      func: 'fetchUserList',
+      func: 'fetchList',
       args: Array.from(arguments)
     };
-    this.search = null;
 
-    this.post(this.resolve('user-list'), {
+    if(typeof where == 'function') {
+      if(filter) {
+        const f = where;
+
+        where = filter;
+        filter = f;
+      } else {
+        filter = where;
+        where = null;
+      }
+    }
+
+    if(where && typeof where != 'object') {
+      if(isNaN(where))
+        where = '%' + where + '%';
+
+      switch(this.type) {
+        case 'user':
+          where = isNaN(where) ? [['Username', 'like', where]] : {ID: where};
+        break;
+        case 'ban':
+          where = isNaN(where) ? [['U.Username', 'like', where], ['I.Username', 'like', where]] : {'B.ID': where};
+        break;
+        case 'log':
+          where = [['Action', 'like', where], ['Information', 'like', where]]
+      }
+    }
+
+    if(this.where && this.where == where)
+      return;
+
+    this.where = where;
+
+    if(typeof where == 'object')
+      where = JSON.stringify(where);
+
+    this.post(this.resolve(this.type + '-list'), {
       limit: this.limit,
       offset: this.offset,
-      order: this.order
-    }).then(users => {
+      order: this.order,
+      where
+    }).then(items => {
       const next = data => {
         if(!data)
-          data = users;
+          data = items;
 
         this.render(data);
       };
 
       if(filter)
-        filter(users, next.bind(this));
+        filter(items, next.bind(this));
       else
         next();
     }).catch(this.error);
   }
 
-  fetchUser(user, filter) {
-    this.lastAction = {
-      func: 'fetchUser',
-      args: Array.from(arguments)
-    };
-    this.search = user;
+  filter(...args) {
+    var func;
 
-    this.post(this.resolve('user'), {
-      user: user
-    }).then(user => {
-      const next = data => {
-        data = data ? data : user;
+    switch(this.type) {
+      case 'user':
+        func = this.filterUser;
+      break;
+      case 'ban':
+        func = this.filterBan;
+      break;
+      case 'log':
+        func = this.filterLog;
+    }
 
-        this.render(data);
-      };
-
-      if(filter)
-        filter(user, next.bind(this));
-      else
-        next();
-    }).catch(this.error);
+    return func(...args);
   }
 
   filterUser(users, next) {
@@ -70,6 +101,41 @@ class DatabaseManager {
     });
 
     next(users);
+  }
+
+  filterBan(bans, next) {
+    if(bans.constructor != Array)
+      bans = [bans];
+
+    bans = bans.map(ban => {
+      ban['Edit'] = '<a class="link" href="/ban/edit/' + ban.ID + '">' +
+                      '<i class="fas fa-edit"></i>' +
+                    '</a>' +
+                    '<a href="/ban/remove/' + ban.ID + '" class="removeBtn">' +
+                      '<i class="far fa-trash-alt"></i>' +
+                    '</a>';
+
+      ban['Length'] = ban.Length == 999 ? 'Permanent' : ban.Length + 'h';
+      ban['Date'] = new Date(ban['Date']).toDateString();
+
+      delete ban.ID;
+      return ban;
+    });
+
+    next(bans);
+  }
+
+  filterLog(logs, next) {
+    if(logs.constructor != Array)
+      logs = [logs];
+
+    logs = logs.map(log => {
+      log['Date'] = new Date(log['Date']).toUTCString();
+
+      return log;
+    });
+
+    next(logs);
   }
 
   post(url, body) {
@@ -166,6 +232,10 @@ class DatabaseManager {
       target = $(target);
 
     this.target = target;
+  }
+
+  setType(type) {
+    this.type = type;
   }
 }
 

@@ -1,12 +1,12 @@
 <% include Templates/head %>
-<script src="/assets/js/pages/users.js"></script>
+<script src="/assets/js/pages/bans.js"></script>
 <div class="container">
   <% include Templates/sidebar %>
   <div class="content">
     <% include Templates/navbar %>
     <div class="body">
       <div class="header">
-        Users
+        Bans
       </div>
       <div class="search">
         <div class="container">
@@ -17,18 +17,21 @@
             </form>
           </div>
           <div class="item">
-            <a href="/user/insert">
+            <a href="/ban/insert">
               <button class="button new">+</button>
             </a>
           </div>
         </div>
       </div>
       <div class="box">
-        <table class="table users">
+        <table class="table bans">
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Username</th>
+              <th>User</th>
+              <th>Issuer</th>
+              <th>Reason</th>
+              <th>Length</th>
+              <th>Date</th>
               <th>Edit</th>
             </tr>
           </thead>

@@ -1,6 +1,8 @@
 'use strict';
 
 const logger = require('../../../Snaildom/Utils/Logger');
+const utils  = require('../../../Snaildom/Utils/Utils');
+
 const Router = require('./Router');
 
 class Query extends Router {
@@ -10,13 +12,27 @@ class Query extends Router {
     this.use('sessionOnly');
 
     this.register('POST', '/user-list', 'handleUserList');
-    this.register('POST', '/user', 'handleUser');
+    this.register('POST', '/ban-list', 'handleBanList');
+    this.register('POST', '/log-list', 'handleLogList');
   }
 
   handleUserList(req, res) {
+    this.fetchList('user', req, res);
+  }
+
+  handleBanList(req, res) {
+    this.fetchList('ban', req, res);
+  }
+
+  handleLogList(req, res) {
+    this.fetchList('log', req, res);
+  }
+
+  fetchList(type, req, res) {
     var limit = Number(req.body.limit),
         offset = Number(req.body.offset),
-        order = req.body.order;
+        order = req.body.order,
+        where = utils.parse(req.body.where, {});
 
     if(!limit || isNaN(limit))
       limit = 50;
@@ -25,21 +41,61 @@ class Query extends Router {
     if(!order || !['asc', 'desc'].includes(order.toLowerCase()))
       order = 'desc';
 
-    this.knex('users').select('ID', 'Username').limit(limit).offset(offset).orderBy('ID', order).then(users => {
-      res.json(users);
-    }).catch(err => this.error(err, req, res));
-  }
+    var table;
+    var select = [];
+    var query = () => {
+      return this.knex(table).select(...select);
+    };
+    var orderBy = 'ID';
 
-  handleUser(req, res) {
-    const {user} = req.body;
+    switch(type) {
+      case 'user':
+        table = 'users';
+        select = ['ID', 'Username'];
+      break;
+      case 'ban':
+        table = 'bans as B';
+        select = ['B.ID', 'U.Username as User', 'I.Username as Issuer', 'B.Reason', 'B.Length', 'B.Date'];
+        orderBy = 'B.ID';
 
-    if(!user)
-      return res.end();
+        query = query()
+          .join('users as U', 'B.User', '=', 'U.ID')
+          .join('users as I', 'B.Issuer', '=', 'I.ID')
+          .where('Active', 1);
+      break;
+      case 'log':
+        table = 'logs';
+        select = ['Action', 'Information', 'Date'];
+    }
 
-    const type = isNaN(user) ? 'Username' : 'ID';
+    if(typeof query == 'function')
+      query = query();
 
-    this.knex('users').select('ID', 'Username').where(type, user).then(user => {
-      res.json(user);
+    if(where && typeof where == 'object') {
+      if(where.constructor === Array) {
+        if(where.length > 0) {
+          var func = 'where';
+
+          for(var i in where) {
+            var w = where[i];
+
+            if(w.constructor !== Array)
+              w = [w];
+
+            query = query[func](...w);
+            func = 'orWhere';
+          }
+        }
+      } else if(Object.keys(where).length > 0) {
+        if(where.constructor !== Array)
+          where = [where];
+
+        query = query.where(...where);
+      }
+    }
+
+    query.limit(limit).offset(offset).orderBy(orderBy, order).then(items => {
+      res.json(items);
     }).catch(err => this.error(err, req, res));
   }
 

@@ -30,6 +30,14 @@ class Main extends Router {
   viewUsers(req, res) {
     res.render(this.view('users'));
   }
+
+  viewBans(req, res) {
+    res.render(this.view('bans'));
+  }
+
+  viewLogs(req, res) {
+    res.render(this.view('logs'));
+  }
 }
 
 function formatSize(size) {
