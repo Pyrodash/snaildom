@@ -13,7 +13,7 @@ console.log('Snaildom v' + ver + ' - a backend for damen\'s snaildom by jackie#9
 if(world)
   new Server(world);
 else
-  logger.fatal('Invalid world. Please use run the server with a valid world id.', true, false);
+  logger.fatal('Invalid world. Please run the server with a valid world id.', true, false);
 
 
 memwatch.on('leak', info => {
