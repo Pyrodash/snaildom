@@ -4,7 +4,6 @@ Snaildom Rewritten is a server emulator for DamenSpike/Sauron's Snaildom.
 ## Features
 - Navigation
 - Shells
-- Singleplayer games
 - Adding/Blocking users
 - Inventory
 - Chatting w/ basic commands

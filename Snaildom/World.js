@@ -46,7 +46,7 @@ class World extends EventEmitter {
       return client.write('<cross-domain-policy><allow-access-from domain="*.' + (config.host || 'localhost') + '" to-ports="*" /></cross-domain-policy>');
 
     const now = new Date().getTime();
-    
+
     if(client.isDead() && (!client.deathTime || (now - client.deathTime) > 5000))
       return logger.warn('Received packet from dead client ' + client.username + ': ' + data);
 
@@ -56,7 +56,7 @@ class World extends EventEmitter {
       packet = packet.slice(0, -1);
 
     packet = packet.split('@');
-
+    
     var header = packet.shift();
     var footer = packet.pop();
 

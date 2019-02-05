@@ -9,6 +9,7 @@ class Commands extends Plugin {
   constructor(manager) {
     super('commands', __dirname, manager);
 
+    this.prefix = this.get('prefix') || '/';
     this.commands = {
       'gg': 'handleGiveGold',
       'gt': 'handleGiveTitle',
@@ -17,8 +18,7 @@ class Commands extends Plugin {
       'rejoin': 'handleRejoin',
       'revive': 'handleRevive'
     };
-    this.prefix = this.get('prefix') || '/';
-
+    
     this.override('handler', 'chat', 'processMessage');
   }
 

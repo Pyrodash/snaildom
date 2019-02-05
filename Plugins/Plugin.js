@@ -60,6 +60,11 @@ class Plugin extends EventManager {
         }
       }
     };
+
+    const p = this.plugins.find('logger') || this.__loggerPlaceholder();
+    this.logger = p;
+
+    this.depend('logger', this.__onLoggerReady.bind(this));
     this.__setup();
   }
 
@@ -135,7 +140,7 @@ class Plugin extends EventManager {
         break;
         case 'commands':
           const commands = this.plugins.find('commands');
-          
+
           if(commands)
             commands.registerCommand(name, func, flags);
       }
@@ -173,6 +178,47 @@ class Plugin extends EventManager {
       break;
       case 'handler':
         this.register('handler', name, func, {override: true});
+    }
+  }
+
+  depend(name, handler) {
+    this.dependentPlugins[name] = handler.bind(this);
+  }
+
+  __loggerPlaceholder() {
+    return {
+      write: (msg) => {
+        if(!this.__logCache)
+          this.__logCache = [];
+        if(!msg.time)
+          msg.time = new Date();
+
+        const args = [msg, ...Array.from(arguments).slice(1)];
+
+        this.__logCache.push({
+          func: 'write',
+          args: args
+        });
+      },
+      log: () => {
+        this.__logCache.push({
+          func: 'log',
+          args: Array.from(arguments)
+        });
+      }
+    }
+  }
+
+  __onLoggerReady(plugin) {
+    this.logger = plugin;
+
+    if(this.__logCache) {
+      for(var i in this.__logCache) {
+        const item = this.__logCache[i];
+        const {func, args} = item;
+        
+        this.logger[func](...args);
+      }
     }
   }
 

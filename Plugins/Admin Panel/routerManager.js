@@ -10,7 +10,10 @@ class RouterManager {
       name: 'router',
       path: path.join(__dirname, 'Routers'),
       params: panel,
-      ignored: ['router']
+      ignored: ['router'],
+      cli: {
+        cli: panel.world.cli
+      }
     });
   }
 }

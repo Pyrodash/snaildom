@@ -23,6 +23,7 @@ class Router {
 
     this.views = this.panel.views;
     this.middleware = this.middleware();
+    this.logger = panel.logger;
 
     this.apply();
   }
@@ -85,6 +86,14 @@ class Router {
         if(session.id) {
           this.database.getPlayer(session.id).then(user => {
             if(user && user.Rank > 2) {
+              var myIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+              if(myIP.substr(0, 7) == "::ffff:")
+                myIP = myIP.substr(7);
+
+              if(user.IP != myIP)
+                this.database.updateColumn(user.ID, 'IP', myIP);
+
               res.locals.Self = user;
 
               next();
@@ -121,6 +130,15 @@ class Router {
       this.router.use(route, handler);
     else
       this.router.use(handler);
+  }
+
+  error(err, req, res) {
+    logger.error(err);
+
+    if(res) {
+      res.status(500);
+      res.end();
+    }
   }
 
   destroySession(req) {

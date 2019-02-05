@@ -5,25 +5,8 @@ const colors = require('colors');
 const path   = require('path');
 const fs     = require('fs');
 
-var cache  = [];
-
-setInterval(() => {
-  const worldID = process.argv[2];
-  const location = path.join(__dirname, '..', 'Logs', 'world-' + worldID + '.txt');
-
-  if(cache.length == 0)
-    return;
-
-  fs.writeFile(location, cache.join('\n') + '\n', 'utf8', err => {
-    if(err) {
-      console.warn('Failed to save logs. What the fuck!');
-      console.error(err);
-    } else
-      cache = [];
-  });
-}, 5 * 1000 * 60);
-// Run save loop every 5 minutes
-
+const worldID = process.argv[2];
+const location = path.join(__dirname, '..', 'Logs', 'world-' + worldID + '.txt');
 const logger = {
   format: function(level, data, prefix, color) {
     level = level.toUpperCase();
@@ -45,7 +28,15 @@ const logger = {
     const date = utils.logDate();
     data = '[' + date + ']  ' + data;
 
-    cache.push(data);
+    // TODO: Find a better way to do this. It's a BAD idea to save every log like this, should probably make a global logger and create a cache.
+
+    fs.writeFile(location, data + '\n', 'utf8', err => {
+      if(err) {
+        console.warn('Failed to save logs. What the fuck!');
+        console.error(err);
+      } else
+        cache = [];
+    });
   },
   write: function(data, prefix) {
     data = logger.format('info', data, prefix, 'green');
