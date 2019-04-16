@@ -13,6 +13,8 @@ class Faction extends Dependency {
       const faction = factions[i];
       const factionObj = findFaction(faction[0]);
 
+      if(!factionObj) continue;
+
       const {id} = factionObj;
 
       if(!factionObj.tiers[faction[1]])

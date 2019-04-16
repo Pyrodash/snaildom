@@ -1,5 +1,4 @@
 const latinMap = require('./LatinMap');
-const nargs = /\{([0-9a-zA-Z._]+)\}/g;
 
 function padLeft(num, base, chr) {
   var len = (String(base || 10).length - String(num).length) + 1;
@@ -90,52 +89,6 @@ const utils = {
   furnitureToString: function(furn) {
     return furn.map(item => [item.id, item.x, item.y, (item.frame || 1), (item.frame2 || 1)].join(':')).join('|');
   },
-  format: function(string) {
-    // Credits to https://github.com/Matt-Esch/
-
-    var args;
-
-    if(arguments.length === 2 && typeof arguments[1] === "object")
-      args = arguments[1];
-    else {
-      args = new Array(arguments.length - 1);
-
-      for (var i = 1; i < arguments.length; ++i) {
-        args[i - 1] = arguments[i];
-      }
-    }
-
-    if (!args || !args.hasOwnProperty)
-      args = {};
-
-    return string.replace(nargs, function replaceArg(match, i, index) {
-      var result;
-
-      if(string[index - 1] === "{" && string[index + match.length] === "}")
-        return i;
-      else {
-        const params = i.split('.');
-        result = args;
-
-        for(var n in params) {
-          const param = params[n];
-
-          if(result.hasOwnProperty(param))
-            result = result[param];
-          else {
-            result = null;
-
-            break;
-          }
-        }
-
-        if(result === null || result === undefined)
-          return '';
-
-        return result;
-      }
-    });
-  },
   logDate: function(d) {
     if(!d)
       d = new Date();
@@ -146,6 +99,74 @@ const utils = {
             [padLeft(d.getHours()),
              padLeft(d.getMinutes()),
              padLeft(d.getSeconds())].join(':');
+  },
+  sleep: function(ms) {
+    return new Promise((resolve, reject) => {
+      setTimeout(resolve, ms);
+    });
+  },
+  findDistance: function(...args) {
+    if(args.length == 2) {
+      const p1 = args[0];
+      const p2 = args[1];
+
+      return utils.findDistance(p1.x, p1.y, p2.x, p2.y);
+    } else {
+      const x1 = args.shift();
+      const y1 = args.shift();
+
+      const x2 = args.shift();
+      const y2 = args.shift();
+
+      return Math.hypot(x2 - x1, y2 - y1);
+    }
+  },
+  findAngle: function(x1, y1, x2, y2) {
+		var _local3 = x2 - x1;
+		var _local2 = y2 - y1;
+		var _local1 = Number((Math.atan2(_local2, _local3) * 57.2957795130823) - 90);
+
+		if(_local1 < 0)
+			return _local1 + 360;
+
+		return _local1;
+	},
+	findDirection: function(angle) {
+		var _local1 = Math.round(angle / 45) + 1;
+
+		if (_local1 > 8)
+			_local1 = 1;
+
+		return _local1;
+	},
+  getDuration: function(x1, y1, x2, y2)
+  {
+     var _loc2_ = x2 - x1;
+     var _loc1_ = y2 - y1;
+     var _loc3_ = Math.sqrt(_loc2_ * _loc2_ + _loc1_ * _loc1_);
+
+     // onEnterFrame runs at 24 frames per second
+     // That's 0.024 frames per millisecond
+     // So 1 frame per 41.66666666666667 milliseconds
+
+     return (_loc3_ / 3) * 41.66666666666667;
+  },
+  randX: function(room) {
+    if(room && room.randX)
+      return room.randX();
+
+    return utils.rand(100, 700);
+  },
+  randY: function(room) {
+    if(room && room.randY)
+      return room.randY();
+
+    return utils.rand(100, 400);
+  },
+  flatten: function(arr) {
+    return arr.reduce(function (flat, toFlatten) {
+      return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
+    }, []);
   }
 };
 

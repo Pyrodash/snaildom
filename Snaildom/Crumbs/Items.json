@@ -587,5 +587,71 @@
     },
     "type": "head",
     "internal": "80"
+  },
+  "ale": {
+    "id": "ale",
+    "name": "Ale",
+    "cost": 5,
+    "type": "drink"
+  },
+  "wine": {
+    "id": "wine",
+    "name": "Wine",
+    "cost": 5,
+    "type": "drink"
+  },
+  "lemonade": {
+    "id": "lemonade",
+    "name": "Lemonade",
+    "cost": 5,
+    "type": "drink"
+  },
+  "water": {
+    "id": "water",
+    "name": "Water",
+    "cost": 5,
+    "type": "drink"
+  },
+  "grapejuice": {
+    "id": "grapejuice",
+    "name": "Grape Juice",
+    "cost": 5,
+    "type": "drink"
+  },
+  "burger": {
+    "id": "burger",
+    "name": "Burger",
+    "cost": 5,
+    "type": "food"
+  },
+  "chicken": {
+    "id": "chicken",
+    "name": "Chicken",
+    "cost": 5,
+    "type": "food"
+  },
+  "chips": {
+    "id": "chips",
+    "name": "Chips",
+    "cost": 5,
+    "type": "food"
+  },
+  "cake": {
+    "id": "cake",
+    "name": "Cake",
+    "cost": 5,
+    "type": "food"
+  },
+  "noodles": {
+    "id": "noodles",
+    "name": "Noodles",
+    "cost": 5,
+    "type": "food"
+  },
+  "popcorn": {
+    "id": "popcorn",
+    "name": "Popcorn",
+    "cost": 5,
+    "type": "food"
   }
 }

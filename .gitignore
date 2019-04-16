@@ -1,2 +1,3 @@
 node_modules/
-Snaildom/Logs/
+Snaildom/Logs/*
+Plugins/Discord/config.json

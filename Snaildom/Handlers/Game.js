@@ -1,7 +1,6 @@
 'use strict';
 
 const Handler = require('../Handler');
-const logger  = require('../Utils/Logger');
 
 class Game extends Handler {
   constructor(world) {
@@ -33,7 +32,7 @@ class Game extends Handler {
         if(typeof handler == 'function')
           handler(data, client);
       } else
-        logger.warn('Player ' + client.getTag() + ' is playing an unknown game. ID: ' + client.room.id);
+        this.logger.warn('Player ' + client.getTag() + ' is playing an unknown game. ID: ' + client.room.id);
     } else if(client.game)
       client.game.processUpdate(data, client);
   }

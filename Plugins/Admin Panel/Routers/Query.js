@@ -1,6 +1,5 @@
 'use strict';
 
-const logger = require('../../../Snaildom/Utils/Logger');
 const utils  = require('../../../Snaildom/Utils/Utils');
 
 const Router = require('./Router');
@@ -100,7 +99,7 @@ class Query extends Router {
   }
 
   error(err, req, res) {
-    logger.error(err);
+    this.logger.error(err);
 
     res.status(500);
     res.end();

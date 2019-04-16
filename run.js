@@ -1,4 +1,4 @@
-const logger   = require('./Snaildom/Utils/Logger');
+const logger   = require('./Snaildom/Utils/LoggerV1');
 const config   = require('./config');
 const ver      = require('./package').version;
 

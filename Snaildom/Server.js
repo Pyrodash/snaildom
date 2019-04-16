@@ -1,10 +1,11 @@
 'use strict';
 
-const logger = require('./Utils/Logger');
+const Logger = require('./Utils/Logger');
 
 const Client = require('./Client');
 const World  = require('./World');
 
+const path   = require('path');
 const net    = require('net');
 
 class Server {
@@ -15,6 +16,13 @@ class Server {
     this.name = world.name || 'Snaildom';
 
     this.clients = [];
+
+    this.logger = new Logger(path.join(__dirname, 'Logs', 'world-' + this.id + '.txt'), [
+      { name: 'info', function: 'write', color: 'green' },
+      { name: 'warning', function: 'warn', color: 'yellow' },
+      { name: 'error', color: 'red'}, // should I add spaces here so that it's under the other colors? Someone who knows javascript linting (is that a word?) please tell me
+      { name: 'fatal', color: 'red', fatal: true}
+    ]);
     this.world = new World(this);
 
     this.start();
@@ -22,13 +30,13 @@ class Server {
 
   start() {
     this.server = net.createServer(socket => {
-      logger.write('A client has connected.');
+      this.logger.write('A client has connected.');
 
       const client = new Client(socket, this);
 
       this.clients.push(client);
     }).listen(this.port, () => {
-      logger.write(this.name + ' is listening on port ' + this.port + '.');
+      this.logger.write(this.name + ' is listening on port ' + this.port + '.');
     });
   }
 

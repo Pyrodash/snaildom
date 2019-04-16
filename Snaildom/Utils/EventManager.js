@@ -66,13 +66,19 @@ class EventManager extends EventEmitter {
     }
   }
 
-  removeEvents() {
+  removeEvents(emitter) {
     for(var name in this.__events) {
-      const listeners = this.__events[name];
+      var listeners = this.__events[name];
+
+      if(emitter && listeners.emitter && listeners.emitter != emitter)
+        continue;
 
       if(listeners.constructor !== Array)
         this.removeEvent(listeners['emitter'], name, listeners['listener']);
       else {
+        if(emitter)
+          listeners = listeners.filter(listener => listener.emitter == emitter);
+
         for(var i in listeners) {
           this.removeEvent(listeners[i]['emitter'], name, listeners[i]['listener']);
         }

@@ -1,13 +1,13 @@
 'use strict';
 
-const logger       = require('./Utils/Logger');
 const utils        = require('./Utils/Utils');
-
 const EventManager = require('./Utils/EventManager');
 
 class Client extends EventManager {
   constructor(socket, server, dummy) {
     super();
+
+    this.logger = server.logger;
 
     this.socket = socket;
     this.server = server;
@@ -69,13 +69,13 @@ class Client extends EventManager {
       });
 
       this.socket.on('error', err => {
-        logger.error(err);
+        this.logger.error(err);
 
         this.disconnect();
       });
 
       this.socket.on('close', _ => {
-        logger.write('A client has disconnected.');
+        this.logger.write('A client has disconnected.');
 
         this.disconnect();
       });

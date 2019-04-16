@@ -2,7 +2,6 @@
 
 const path         = require('path');
 const utils        = require('../Snaildom/Utils/Utils');
-const logger       = require('../Snaildom/Utils/Logger');
 
 const EventManager = require('../Snaildom/Utils/EventManager');
 
@@ -34,37 +33,12 @@ class Plugin extends EventManager {
     this.plugins = manager;
 
     this.config = utils.require(path.join(this.path, 'config.json'), {});
+    this.dependencies = {};
 
-    this.dependentPlugins = {
-      "commands": plugin => {
-        if(!this.__external)
-          this.__external = {};
-        if(!this.__external.commands)
-          this.__external.commands = {};
+    this.logger = this.world.logger;
+    this.loggerPro = this.__loggerPlaceholder();
 
-        for(var name in this.__external.commands) {
-          const handlers = this.__external.commands[name];
-
-          if(typeof handlers == 'function')
-            plugin.registerCommand(name, handlers);
-          else {
-            for(var i in handlers) {
-              var handler = handlers[i];
-
-              if(typeof handler == 'function')
-                handler = {func: handler, flags: {}};
-
-              plugin.registerCommand(name, handler.func, handler.flags);
-            }
-          }
-        }
-      }
-    };
-
-    const p = this.plugins.find('logger') || this.__loggerPlaceholder();
-    this.logger = p;
-
-    this.depend('logger', this.__onLoggerReady.bind(this));
+    this.__setupDependencies();
     this.__setup();
   }
 
@@ -72,17 +46,39 @@ class Plugin extends EventManager {
     return this.config[key];
   }
 
+  __setupDependencies() {
+    this.depend('plugin', 'commands', false, this.__onCommandsReady.bind(this));
+    this.depend('plugin', 'logger', 'loggerPro', this.__onLoggerReady.bind(this));
+  }
+
   __setup() {
     this.addEvent(this.plugins.loader, 'loaded plugin', (name, plugin) => {
-      for(var i in this.dependentPlugins) {
-        const handler = this.dependentPlugins[i];
-        const dependency = i.toLowerCase();
+      const dependencies = this.dependencies['plugin'];
 
-        if(dependency == this.name.toLowerCase())
+      for(var i in dependencies) {
+        const dependency = dependencies[i];
+        const {handler} = dependency;
+
+        if(dependency.name == this.name.toLowerCase())
           continue;
 
-        if(dependency == name.toLowerCase())
-          handler(plugin);
+        if(dependency.name == name.toLowerCase())
+          handler(plugin, name.toLowerCase());
+      }
+    });
+
+    this.addEvent(this.handlers.loader, 'loaded handler', (name, handler) => {
+      const dependencies = this.dependencies['plugin'];
+
+      for(var i in dependencies) {
+        const dependency = dependencies[i];
+        const depHandler = dependency.handler;
+
+        if(dependency.name == this.name.toLowerCase())
+          continue;
+
+        if(dependency.name == name.toLowerCase())
+          depHandler(handler, name.toLowerCase());
       }
     });
   }
@@ -96,7 +92,7 @@ class Plugin extends EventManager {
       type = 'handler';
     if(!func && type && name) {
       if(['handler', 'command'].includes(type))
-        return logger.warn('No function provided for ' + type + ' of name ' + name + '.');
+        return this.logger.warn('No function provided for ' + type + ' of name ' + name + '.');
       else {
         name = type;
         func = name;
@@ -104,7 +100,7 @@ class Plugin extends EventManager {
       }
     }
     if(!type || !name || !func)
-      return logger.warn('Not enough arguments. [' + Array.from(arguments).join(', ') + ']');
+      return this.logger.warn('Not enough arguments. [' + Array.from(arguments).join(', ') + ']');
 
     if(typeof func == 'string') {
       if(this[func] && typeof this[func] == 'function')
@@ -154,7 +150,7 @@ class Plugin extends EventManager {
       type = 'handler';
     if(!func && type && name) {
       if(['handler', 'command'].includes(type))
-        return logger.warn('No function provided for ' + type + ' of name ' + name + '.');
+        return this.logger.warn('No function provided for ' + type + ' of name ' + name + '.');
       else {
         name = type;
         func = name;
@@ -162,7 +158,7 @@ class Plugin extends EventManager {
       }
     }
     if(!type || !name || !func)
-      return logger.warn('Not enough arguments. [' + Array.from(arguments).join(', ') + ']');
+      return this.logger.warn('Not enough arguments. [' + Array.from(arguments).join(', ') + ']');
 
     if(typeof func == 'string') {
       if(this[func] && typeof this[func] == 'function')
@@ -170,7 +166,7 @@ class Plugin extends EventManager {
     }
 
     if(typeof func != 'function')
-      return logger.warn('Invalid function ' + func + '.');
+      return this.logger.warn('Invalid function ' + func + '.');
 
     switch(type) {
       case 'command':
@@ -181,8 +177,98 @@ class Plugin extends EventManager {
     }
   }
 
-  depend(name, handler) {
-    this.dependentPlugins[name] = handler.bind(this);
+  depend(...args) {
+    const types = ['plugin', 'handler'];
+    const defaultType = 'plugin';
+    const defaultHandler = this.__onDependencyLoaded.bind(this);
+
+    var type, name, key, handler;
+
+    const getHandler = k => {
+      if(typeof k == 'function') return k;
+
+      k = k.split('h.'); // e.g. h.onCommandsLoaded
+      if(k.length == 1) return false;
+      k = k[1];
+
+      if(this[k] && typeof this[k] == 'function') return this[k].bind(this);
+
+      return false;
+    };
+    const isHandler = k => Boolean(getHandler(k));
+
+    function parseArgs(i) {
+      switch(i) {
+        case 1:
+          name = args[0];
+        break;
+        case 2:
+          if(types.includes(args[0])) {
+            type = args[0];
+            name = args[1];
+          } else {
+            name = args[0];
+
+            if(isHandler(args[1]))
+              handler = getHandler(args[1]);
+            else
+              key = args[1];
+          }
+        break;
+        case 3:
+          if(types.includes(args[0])) {
+            type = args.shift();
+            name = args.shift();
+          } else
+            name = args.shift();
+
+          if(!key) {
+            if(isHandler(args[0]))
+              handler = getHandler(args[0]);
+            else
+              key = args[0];
+          }
+        break;
+        case 4:
+          type = args[0];
+          name = args[1];
+          key = args[2];
+          handler = getHandler(args[3]);
+      }
+
+      if(!type) type = defaultType;
+      if(key === undefined) key = name;
+      if(!handler) handler = defaultHandler;
+    }
+
+    parseArgs(args.length);
+
+    if(!type || !name || !handler)
+      return this.logger.warn('Not enough arguments to add a new dependency.');
+
+    const realHandler = handler;
+    handler = (...args2) => {
+      realHandler(...args2, type);
+      defaultHandler(...args2, type);
+    };
+    name = name.toLowerCase();
+
+    if(!this.dependencies[type]) this.dependencies[type] = [];
+    this.dependencies[type].push({name, type, key, handler});
+
+    switch(type) {
+      case 'plugin':
+        const plugin = this.plugins.find(name);
+
+        if(plugin)
+          handler(plugin, name);
+      break;
+      case 'handler':
+        const myHandler = this.handlers.find(name, true);
+
+        if(myHandler)
+          handler(myHandler, name);
+    }
   }
 
   __loggerPlaceholder() {
@@ -209,17 +295,46 @@ class Plugin extends EventManager {
     }
   }
 
-  __onLoggerReady(plugin) {
-    this.logger = plugin;
+  __onCommandsReady(plugin) {
+    if(!this.__external)
+      this.__external = {};
+    if(!this.__external.commands)
+      this.__external.commands = {};
 
+    for(var name in this.__external.commands) {
+      const handlers = this.__external.commands[name];
+
+      if(typeof handlers == 'function')
+        plugin.registerCommand(name, handlers);
+      else {
+        for(var i in handlers) {
+          var handler = handlers[i];
+
+          if(typeof handler == 'function')
+            handler = {func: handler, flags: {}};
+
+          plugin.registerCommand(name, handler.func, handler.flags);
+        }
+      }
+    }
+  }
+
+  __onLoggerReady(plugin) {
     if(this.__logCache) {
       for(var i in this.__logCache) {
         const item = this.__logCache[i];
         const {func, args} = item;
-        
-        this.logger[func](...args);
+
+        this.loggerPro[func](...args);
       }
     }
+  }
+
+  __onDependencyLoaded(dep, name, type) {
+    const d = this.dependencies[type].find(dp => dp.name == name);
+
+    if(d && d.key)
+      this[d.key] = dep;
   }
 
   destroy() {

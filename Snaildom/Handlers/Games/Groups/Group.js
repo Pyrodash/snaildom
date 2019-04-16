@@ -15,12 +15,15 @@ class Group extends EventManager {
     }
 
     this.game = game;
-    this.started = false;
+    this.logger = game.logger;
 
+    this.started = false;
     this.clients = [];
 
     this.maxClients = opts.maxClients || 0;
     this.warps = opts.warps;
+
+    this.sendLeave = opts.sendLeave != undefined ? Boolean(opts.sendLeave) : true;
   }
 
   write(data, ignored) {
@@ -96,16 +99,20 @@ class Group extends EventManager {
   }
 
   remove(client) {
+    var isPlayer = false;
     this.clients = this.clients.filter(sclient => sclient != client && sclient.id != client.id);
 
     if(this.started === true && !client.spectator)
-      this.update('leave', client.build(true));
+      isPlayer = true;
 
     client.group = null;
     client.game = null;
     client.spectator = null;
 
     this.emit('user removed', client);
+
+    if(isPlayer && this.sendLeave)
+      this.update('leave', client.build(true));
   }
 
   build() {

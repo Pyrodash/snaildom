@@ -1,7 +1,6 @@
 'use strict';
 
 const Handler = require('../Handler');
-const logger  = require('../Utils/Logger');
 
 class Friend extends Handler {
   constructor(world) {
@@ -76,7 +75,7 @@ class Friend extends Handler {
               name: Player.Username
             });
           }
-        }).catch(logger.error);
+        }).catch(this.logger.error);
       }
     }
   }

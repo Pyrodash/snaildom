@@ -8,6 +8,7 @@ class Room extends EventEmitter {
     super();
 
     this.world = world;
+    this.logger = world.logger;
 
     this.server = world.server;
     this.database = world.database;
@@ -85,6 +86,9 @@ class Room extends EventEmitter {
 
     if(client.room == this)
       client.room = null;
+
+    this.emit('player left', client);
+    client.emit('left room', this);
   }
 
   build() {

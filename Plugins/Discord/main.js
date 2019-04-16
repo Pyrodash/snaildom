@@ -1,6 +1,5 @@
 'use strict';
 
-const logger      = require('../../Snaildom/Utils/Logger');
 const utils       = require('../../Snaildom/Utils/Utils');
 
 const Plugin      = require('../Plugin');
@@ -18,7 +17,7 @@ class Discord extends Plugin {
     this.LEVELS = {
       DEFAULT: {
         color: '#0099FF',
-        channel: '531360303259058179'
+        channel: '567105261328662537'
       }
     };
 
@@ -29,7 +28,11 @@ class Discord extends Plugin {
     this.client = new Client;
 
     this.addEvent(this.client, 'ready', () => {
-      logger.write('Discord is ready.');
+      this.logger.write('Discord is ready.');
+    });
+
+    this.addEvent(this.client, 'error', err => {
+      this.logger.error(err);
     });
 
     this.client.login(this.get('token'));
@@ -57,7 +60,7 @@ class Discord extends Plugin {
       embed.setThumbnail(msg.thumbnail);
 
     const channel = this.client.channels.get(level.channel);
-    
+
     if(channel)
       channel.send(embed);
   }

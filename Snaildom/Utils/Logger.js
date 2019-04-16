@@ -1,83 +1,123 @@
-// A E S T H E T I C S
+'use strict';
+
+const fs     = require('fs');
 
 const utils  = require('./Utils');
 const colors = require('colors');
-const path   = require('path');
-const fs     = require('fs');
 
-const worldID = process.argv[2];
-const location = path.join(__dirname, '..', 'Logs', 'world-' + worldID + '.txt');
-const logger = {
-  format: function(level, data, prefix, color) {
-    level = level.toUpperCase();
-    var msg = '[' + level + ']';
+class Logger {
+  constructor(savePath, levels) {
+    this.path = savePath;
 
-    if(prefix)
-      msg += '[' + prefix + ']';
+    this.levels = [];
+    this.cache = [];
 
-    msg += ' > ';
+    for(var level of levels) {
+      this.createLevel(level);
+    }
 
-    if(color && colors[color])
-      msg = colors[color](msg);
+    this.interval = setInterval(this.saveLoop.bind(this), 5 * 60 * 1000)
+  }
 
-    msg += data;
+  saveLoop() {
+    if(this.cache.length == 0) return;
 
-    return msg;
-  },
-  save: function(data) {
-    const date = utils.logDate();
-    data = '[' + date + ']  ' + data;
-
-    // TODO: Find a better way to do this. It's a BAD idea to save every log like this, should probably make a global logger and create a cache.
-
-    fs.writeFile(location, data + '\n', 'utf8', err => {
+    fs.writeFile(this.path, this.cache.join('\n') + '\n', 'utf8', err => {
       if(err) {
         console.warn('Failed to save logs. What the fuck!');
         console.error(err);
       } else
-        cache = [];
+        this.log(null, 'Saved logs successfully.', { save: false });
     });
-  },
-  write: function(data, prefix) {
-    data = logger.format('info', data, prefix, 'green');
+  }
 
-    console.log(data);
-  },
-  warn: function(data, prefix) {
-    data = logger.format('warning', data, prefix, 'yellow');
+  save(data) {
+    data = '[' + utils.logDate() + ']' + data;
 
-    console.log(data);
-    logger.save(data);
-  },
-  error: function(data, prefix) {
-    if(data.stack)
-      data = data.stack;
+    this.cache.push(data);
+  }
 
-    data = logger.format('error', data, prefix, 'red');
+  log(level, data, opts) {
+    if(!opts)
+      opts = {};
+    if(typeof level == 'string')
+      level = this.findLevel(level);
+    if(!level)
+      level = this.levels[0]; // Use first level as fallback
 
-    console.log(data);
-    logger.save(data);
-  },
-  fatal: function(data, shutdown, alert, prefix) {
-    data = logger.format('fatal', data, prefix, 'red');
+    const color = level.color;
+    const name  = level.name.toUpperCase();
+    var   msg   = '[' + name + ']';
 
-    console.log(data);
-    logger.save(data);
+    if(opts.prefix)
+      msg = '[' + opts.prefix + ']' + msg;
+    if(opts.suffix)
+      msg += '[' + suffix + ']';
 
-    if(typeof shutdown == 'string') {
-      prefix = shutdown;
+    msg += ' > ';
+    var raw = msg;
 
-      shutdown = null;
-      alert = null;
-    }
+    if(color && colors[color])
+      msg = colors[color](msg);
+    if(opts.color && colors[opts.color])
+      msg = colors[opts.color](msg);
 
-    if(shutdown !== false) {
-      if(alert !== false)
-        logger.warn('Server shutting down...');
+    msg += data;
+    raw += data;
+
+    var log = true;
+
+    if(level.log == false)
+      log = false;
+    if(opts.log == true)
+      log = true;
+    else if(opts.log == false) // Need it to be explicitly false, that's why I use else if instead of else
+      log = false;
+
+    var save = true;
+
+    if(level.save == false)
+      save = false;
+    if(opts.save == true)
+      save = true;
+    else if(opts.save == false) // ^
+      save = false;
+
+    if(log)
+      console.log(msg);
+
+    if(save)
+      this.save(raw);
+
+    if(level.fatal || opts.fatal) {
+      var alert = true;
+
+      if(opts.alert == false)
+        alert = false;
+
+      if(alert)
+        this.log('warning', 'Shutting down...');
 
       process.exit();
     }
   }
-};
 
-module.exports = logger;
+  createLevel(level) {
+    const name = level.name.toLowerCase();
+    var funcName = name;
+
+    if(level.function)
+      funcName = level.function;
+
+    this.levels.push(level);
+    this[funcName] = (...args) => {
+      this.log(level, ...args);
+    };
+  }
+
+  findLevel(name) {
+    return this.levels.find(level => level.name == name.toLowerCase());
+  }
+}
+
+module.exports = Logger;

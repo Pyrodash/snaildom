@@ -1,13 +1,18 @@
 'use strict';
 
-const utils   = require('../../Snaildom/Utils/Utils');
 const reload  = require('require-reload');
+const utils   = reload('./utils');
 
 const Plugin  = require('../Plugin');
-const Client  = require('../../Snaildom/Client');
 
 const NPCList = reload('./NPCs');
 const Topics  = reload('./Topics');
+
+const NPC     = reload('./NPC');
+const AI      = reload('./AI');
+
+const topics  = utils.parseTopics(Topics);
+const npcs    = utils.parseNPCs(NPCList);
 
 class NPCs extends Plugin {
   constructor(manager) {
@@ -23,48 +28,52 @@ class NPCs extends Plugin {
     if(!this.npcs)
       this.npcs = [];
 
-    for(var i in NPCList) {
-      const Player = NPCList[i];
-      const NPC = new Client(null, this.server, true);
+    for(var i in npcs) {
+      const Player = npcs[i];
+      const NPCClass = Player.AI ? AI : NPC;
+      const npc = new NPCClass(Player, this.server);
 
-      NPC.authenticated = true;
-      NPC.dialogue = Player.Dialogue;
-
-      NPC.setPlayer(Player);
-      NPC.joinRoom(Player.Room, Player.X, Player.Y, Player.Frame);
-
-      this.npcs.push(NPC);
+      this.npcs.push(npc);
     }
   }
 
   handleTalk(data, client) {
     const {id} = data;
-    const NPC = this.npcs.find(npc => npc.id == id);
+    const npc = this.npcs.find(npc => npc.id == id);
 
-    if(NPC && NPC.room == client.room) {
-      if(NPC.dialogue)
+    if(npc && npc.room == client.room) {
+      if(npc.dialogue && Object.keys(npc.dialogue).length > 0)
         client.send('talk', {
-          player: NPC.build(),
-          dialogue: NPC.dialogue
+          player: npc.build(),
+          dialogue: npc.dialogue
         });
     }
   }
 
   handleResponse(data, client) {
     const topicID = data.topic;
-    const topic = Topics.find(t => t.id == topicID);
-
+    const topic = topics.find(t => t.id == topicID);
+    
     if(topic) {
       const topicObj = Object.assign({}, topic);
-      const NPC = this.npcs.find(npc => npc.id == topic.npc);
+      const npc = this.npcs.find(npc => npc.id == topic.npc);
 
       topicObj.message = utils.format(topicObj.message, {my: client});
 
-      if(NPC && NPC.room == client.room)
+      if(npc && npc.room == client.room) {
         client.send('response', {
-          player: NPC.build(),
+          player: npc.build(),
           dialogue: topicObj
         });
+
+        if(topicObj.item) {
+          const handlers = this.handlers.find('buy');
+
+          for(var handler of handlers) {
+            handler({id: topicObj.item}, client);
+          }
+        }
+      }
     }
   }
 

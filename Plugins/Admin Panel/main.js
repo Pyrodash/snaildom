@@ -5,7 +5,6 @@ const Plugin        = require('../Plugin');
 
 const express       = require('express');
 const helmet        = require('helmet');
-const logger        = require('../../Snaildom/Utils/Logger');
 
 const bodyParser    = require('body-parser');
 const cookieParser  = require('cookie-parser');
@@ -45,7 +44,7 @@ class AdminPanel extends Plugin {
     this.routerManager = new RouterManager(this);
     this.server = this.app.listen(this.port);
 
-    logger.write('Admin Panel listening on port ' + this.port + '.');
+    this.logger.write('Admin Panel listening on port ' + this.port + '.');
   }
 
   destroy() {

@@ -1,11 +1,16 @@
 'use strict';
 
-const logger = require('./Utils/Logger');
+const EventManager = require('./Utils/EventManager');
 
-class Handler {
+class Handler extends EventManager {
   constructor(world) {
+    super();
+
     this.world = world;
+
+    this.logger = world.logger;
     this.server = world.server;
+
     this.database = world.database;
     this.roomManager = world.roomManager;
 
@@ -26,7 +31,7 @@ class Handler {
       if(this[handler] && typeof this[handler] == 'function')
         handler = this[handler].bind(this);
       else
-        return logger.warn('Function ' + handler + ' was not found for a handler.');
+        return this.logger.warn('Function ' + handler + ' was not found for a handler.');
     }
 
     if(typeof handler == 'function') {

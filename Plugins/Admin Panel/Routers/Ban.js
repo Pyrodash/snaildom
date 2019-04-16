@@ -67,7 +67,7 @@ class Ban extends Router {
     this.validate(Ban, req, res).then(resp => {
       if(resp) {
         if(Cached && Cached.User != user)
-          this.logger.log('ban', res.locals.Self, resp[0]);
+          this.loggerPro.log('ban', res.locals.Self, resp[0]);
 
         this.database.updateColumn(resp[0].ID, 'Rank', 1);
 
@@ -104,7 +104,7 @@ class Ban extends Router {
         this.database.updateColumn(resp[0].ID, 'Rank', 1);
 
         this.knex('bans').insert(Ban).then(() => {
-          this.logger.log('ban', res.locals.Self, resp[0]);
+          this.loggerPro.log('ban', res.locals.Self, resp[0]);
 
           res.redirect('/bans');
         }).catch(err => this.error(err, req, res));
@@ -125,7 +125,7 @@ class Ban extends Router {
       }
 
       this.knex('users').first('Username').where('ID', Ban.User).then(User => {
-        this.logger.log('unban', res.locals.Self, User);
+        this.loggerPro.log('unban', res.locals.Self, User);
       }).catch(err => this.error(err));
     };
 

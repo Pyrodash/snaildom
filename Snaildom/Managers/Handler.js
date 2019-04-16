@@ -17,7 +17,13 @@ class Handler extends Manager {
     this.packets = {};
   }
 
-  find(packet) {
+  find(packet, isHandler) {
+    if(isHandler == true) {
+      packet = packet.toLowerCase();
+
+      return this.loader.storage.find(handler => handler._metadata.name.toLowerCase() == packet);
+    }
+
     var myHandlers = this.packets[packet] || [];
     var handlers = [];
 

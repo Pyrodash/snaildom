@@ -8,6 +8,7 @@ const filter = require('../../Snaildom/Utils/Filter');
 class Commands extends Plugin {
   constructor(manager) {
     super('commands', __dirname, manager);
+    this.depend('handler', 'moderation');
 
     this.prefix = this.get('prefix') || '/';
     this.commands = {
@@ -15,10 +16,14 @@ class Commands extends Plugin {
       'gt': 'handleGiveTitle',
       'gc': 'handleGiveColor',
       'jr': 'handleJoinRoom',
+      'am': 'handleAddMaterial',
       'rejoin': 'handleRejoin',
-      'revive': 'handleRevive'
+      'revive': 'handleRevive',
+      'warn': 'handleWarn',
+      'kick': 'handleKick',
+      'ban': 'handleBan'
     };
-    
+
     this.override('handler', 'chat', 'processMessage');
   }
 
@@ -247,11 +252,102 @@ class Commands extends Plugin {
         else
           client.alert('User ' + user + ' was not found.');
       }).catch(err => {
-        logger.error(err);
+        this.logger.error(err);
 
         client.alert('An error occured. Please contact a server administrator.', 'warning');
       });
     }
+  }
+
+  handleAddMaterial(data, client) {
+    if(client.rank > 2) {
+      const mats = ['silver', 'iron', 'gold'];
+
+      const user = data.shift();
+      var   mat = data.shift();
+      const amt = Number(data[0]) || 1;
+
+      if(!user || !mat)
+        return client.alert('Not enough parameters.', 'warning');
+
+      mat = mat.toLowerCase();
+
+      if(!mats.includes(mat))
+        return client.alert('Invalid material: ' + mat + '.');
+
+      const sclient = this.server.getClient(user);
+
+      if(sclient) {
+        sclient.addMaterial(mat, amt);
+
+        client.alert('Added ' + amt + ' ' + mat + ' to ' + sclient.username + '.');
+      } else {
+        const fail = err => {
+          this.logger.error(err);
+
+          client.alert('An error occured. Please contact a server administrator.', 'warning');
+        };
+
+        this.database.getColumns(user, 'Username', 'Materials').then(Player => {
+          if(Player) {
+            Player.Materials = utils.parse(Player.Materials, {});
+
+            for(var i in Player.Materials) {
+              Player.Materials[i] = Number(Player.Materials[i]) || 0;
+            }
+
+            if(!Player.Materials[id])
+              Player.Materials[id] = 0;
+
+            Player.Materials[id] += amt;
+
+            this.updateColumn(user, 'Materials', JSON.stringify(Player.Materials)).then(res => {
+              if(res > 0)
+                client.alert('Added ' + amt + ' ' + mat + ' to offline ' + Player.Username);
+              else
+                client.alert('This is embarrassing.. It didn\'t go through. Please try again.');
+            }).catch(fail);
+          } else
+            client.alert('User ' + user + ' was not found.');
+        }).catch(fail);
+      }
+    }
+  }
+
+  handleWarn(data, client) {
+    const user = data.shift();
+    const reason = data.join(' ');
+
+    this.moderation.punish('warn', { user, reason }, client);
+  }
+
+  handleKick(data, client) {
+    const user = data.shift();
+    const reason = data.join(' ');
+
+    this.moderation.punish('kick', { user, reason }, client);
+  }
+
+  handleBan(data, client) {
+    const user = data.shift();
+    var length = 999;
+
+    if(data[0]) {
+      if(isNaN(data[0])) {
+        const arr = data[0].toLowerCase().split('h');
+
+        if(arr.length == 2 && !isNaN(arr[0])) {
+          data.shift();
+
+          length = Number(arr[0]);
+        }
+      } else
+        length = data.shift();
+    }
+
+    const reason = data.join(' ');
+
+    this.moderation.punish('ban', { user, reason, length }, client);
   }
 }
 

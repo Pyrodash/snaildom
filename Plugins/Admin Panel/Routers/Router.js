@@ -1,8 +1,6 @@
 'use strict';
 
 const express = require('express');
-const logger  = require('../../../Snaildom/Utils/Logger');
-
 const path    = require('path');
 
 class Router {
@@ -23,7 +21,9 @@ class Router {
 
     this.views = this.panel.views;
     this.middleware = this.middleware();
+
     this.logger = panel.logger;
+    this.loggerPro = panel.loggerPro;
 
     this.apply();
   }
@@ -48,7 +48,7 @@ class Router {
     method = method.toLowerCase();
 
     if(!methods.includes(method))
-      return logger.warn('Invalid method: ' + method + ' for route ' + route);
+      return this.logger.warn('Invalid method: ' + method + ' for route ' + route);
 
     if(typeof processor == 'string')
       processor = this[processor];
@@ -59,7 +59,7 @@ class Router {
         try {
           processor(req, res, next);
         } catch(e) {
-          logger.error(e);
+          this.logger.error(e);
         }
       };
 
@@ -133,7 +133,7 @@ class Router {
   }
 
   error(err, req, res) {
-    logger.error(err);
+    this.logger.error(err);
 
     if(res) {
       res.status(500);

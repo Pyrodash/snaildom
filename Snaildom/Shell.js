@@ -2,7 +2,6 @@
 
 const Room   = require('./Room');
 const utils  = require('./Utils/Utils');
-const logger = require('./Utils/Logger');
 
 class Shell extends Room {
   constructor(crumbs, world) {
@@ -35,7 +34,7 @@ class Shell extends Room {
   }
 
   updateColumn(col, val) {
-    return this.database.knex('shells').update(col, val).where('Owner', this.owner.id).catch(err => logger.error);
+    return this.database.knex('shells').update(col, val).where('Owner', this.owner.id).catch(this.logger.error);
   }
 }
 

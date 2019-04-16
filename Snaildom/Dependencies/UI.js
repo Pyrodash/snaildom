@@ -21,6 +21,10 @@ class UI extends Dependency {
       type
     });
   }
+
+  warn(warning) {
+    this.send('warning', {warning})
+  }
 }
 
 module.exports = UI;

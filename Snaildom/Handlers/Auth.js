@@ -1,12 +1,11 @@
 'use strict';
 
 const Handler   = require('../Handler');
+const reload    = require('require-reload')(require);
 
-const items     = require('../Crumbs/Items');
-const furniture = require('../Crumbs/Furniture');
-const factions  = require('../Crumbs/Factions');
-
-const logger    = require('../Utils/Logger');
+const items     = reload('../Crumbs/Items');
+const furniture = reload('../Crumbs/Furniture');
+const factions  = reload('../Crumbs/Factions');
 
 class Auth extends Handler {
   constructor(world) {
@@ -20,7 +19,7 @@ class Auth extends Handler {
     const cipherKey = data.playerkey2;
 
     const fail = err => {
-      logger.error(err);
+      this.logger.error(err);
       console.log(err.stack);
 
       client.error(null, true);
@@ -44,7 +43,9 @@ class Auth extends Handler {
           }
 
           client.authenticated = true;
+
           client.setPlayer(player);
+          client.updateColumn('IP', client.ip);
 
           client.send('items', {
             items: items,
@@ -55,6 +56,9 @@ class Auth extends Handler {
           client.refreshWorld();
           client.refreshFriends();
           client.joinRoom();
+
+          if(!client.tutorial)
+            client.addQuest(1, false);
 
           for(var i in client.friends) {
             const friend = this.server.getClient(client.friends[i]);
