@@ -12,6 +12,9 @@ class Item extends Handler {
 
     this.register('buy', 'handleBuy');
     this.register('buyfurniture', 'handleBuyFurniture');
+
+    this.register('forge', 'handleForge');
+    this.register('drop', 'handleDrop');
   }
 
   handleBuy(data, client) {
@@ -40,6 +43,30 @@ class Item extends Handler {
       } else
         client.alert('You don\'t have enough gold.', 'warning');
     }
+  }
+
+  handleForge(data, client) {
+    const {id} = data;
+    const item = items[id];
+
+    if(item && item.forge) {
+      if(client.hasMaterials(item.forge)) {
+        if(client.gold >= item.cost) {
+          client.removeMaterials(item.forge);
+          client.removeGold(item.cost);
+
+          client.addItem(id);
+        } else
+          client.alert('You don\'t have enough gold to forge this item.', 'warning');
+      } else
+        client.alert('You don\'t have enough materials to forge this item.', 'warning');
+    }
+  }
+
+  handleDrop(data, client) {
+    const {id} = data;
+
+    client.removeItem(id);
   }
 }
 

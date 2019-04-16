@@ -2,7 +2,7 @@
 
 const CLI          = require('./FileLoaderCLI');
 
-const logger       = require('./Logger');
+const logger       = require('./LoggerV1');
 const reload       = require('require-reload');
 
 const path         = require('path');

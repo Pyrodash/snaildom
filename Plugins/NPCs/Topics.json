@@ -22,7 +22,7 @@
   {
     "id": 2,
     "response": "Kingdom",
-    "message": "This kingdom was set up by King Damen the First.&break; He was the first King to rule Snaildom in the Beta Era and made the Toblerthrone.&break; Made out of 1000 toblerone bars,&break; all eaten by King Damen himself.",
+    "message": [["This kingdom was set up by King Damen the First.", "He was the first King to rule Snaildom in the Beta Era and made the Toblerthrone.", "Made out of 1000 toblerone bars,", "all eaten by King Damen himself."]],
     "responses": [
       {
         "id": 1,
@@ -62,7 +62,7 @@
   {
     "id": 4,
     "response": "Forging",
-    "message": "Here at the Forge, you can forge items.&break; You can do that by going up to the oven right above.&break; To forge an item, you need to have enough ores and gold.",
+    "message": [["Here at the Forge, you can forge items.", "You can do that by going up to the oven right above.", "To forge an item, you need to have enough ores and gold."]],
     "responses": [
       {
         "id": 4,
@@ -78,7 +78,7 @@
   {
     "id": 5,
     "response": "Ore",
-    "message": "You can find ores in the Blackmine.&break; There's iron ore,&break; silver ore and gold ore.&break; You currently have {my.materials.iron} iron ore,&break; {my.materials.silver} silver ore and {my.materials.gold} gold ore.",
+    "message": [["You can find ores in the Blackmine.", "There's iron ore,", "silver ore and gold ore.", "You currently have {my.materials.iron} iron ore,", "{my.materials.silver} silver ore and {my.materials.gold} gold ore."]],
     "responses": [
       {
         "id": 4,
@@ -90,5 +90,176 @@
       }
     ],
     "npc": 99994
+  },
+  {
+    "id": 6,
+    "message": "HAHAAHAH!!!!",
+    "responses": [
+      {
+        "id": "GOODBYE",
+        "message": "I'm going now..."
+      }
+    ],
+    "npc": 99996
+  },
+  {
+    "id": 7,
+    "message": "Have a look at my wares.",
+    "responses": [
+      {
+        "id": "GOODBYE",
+        "message": "Nevermind"
+      },
+      {
+        "id": 12,
+        "message": "Grape Juice"
+      },
+      {
+        "id": 11,
+        "message": "Water"
+      },
+      {
+        "id": 10,
+        "message": "Lemonade"
+      },
+      {
+        "id": 9,
+        "message": "Wine"
+      },
+      {
+        "id": 8,
+        "message": "Ale"
+      }
+    ],
+    "npc": 99998
+  },
+  {
+    "id": 8,
+    "message": "Good choice, enjoy!",
+    "responses": "t.13",
+    "item": "ale",
+    "npc": "t.7"
+  },
+  {
+    "id": 9,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "wine",
+    "npc": "t.7"
+  },
+  {
+    "id": 10,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "lemonade",
+    "npc": "t.7"
+  },
+  {
+    "id": 11,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "water",
+    "npc": "t.7"
+  },
+  {
+    "id": 12,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "grapejuice",
+    "npc": "t.7"
+  },
+  {
+    "id": 13,
+    "responses": [
+      {
+        "id": 1,
+        "message": "Rumors"
+      },
+      {
+        "id": "GOODBYE",
+        "message": "Barliman"
+      },
+      {
+        "id": 7,
+        "message": "Drink"
+      },
+      {
+        "id": 14,
+        "message": "Food"
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "message": "t.7",
+    "responses": [
+      {
+        "id": 15,
+        "message": "Burger"
+      },
+      {
+        "id": 16,
+        "message": "Chicken"
+      },
+      {
+        "id": 17,
+        "message": "Chips"
+      },
+      {
+        "id": 18,
+        "message": "Cake"
+      },
+      {
+        "id": 19,
+        "message": "Noodles"
+      },
+      {
+        "id": 20,
+        "message": "Popcorn"
+      }
+    ],
+    "npc": "t.7"
+  },
+  {
+    "id": 15,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "burger",
+    "npc": "t.7"
+  },
+  {
+    "id": 16,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "chicken",
+    "npc": "t.7"
+  },
+  {
+    "id": 17,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "chips",
+    "npc": "t.7"
+  },
+  {
+    "id": 18,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "cake",
+    "npc": "t.7"
+  },
+  {
+    "id": 19,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "noodles",
+    "npc": "t.7"
+  },
+  {
+    "id": 20,
+    "message": "t.8",
+    "responses": "t.8",
+    "item": "popcorn",
+    "npc": "t.7"
   }
 ]

@@ -1,7 +1,6 @@
 'use strict';
 
 const path       = require('path');
-const logger     = require('../Utils/Logger');
 
 const Handler    = require('../Handler');
 const FileLoader = require('../Utils/FileLoader');
@@ -35,7 +34,7 @@ class Multiplayer extends Handler {
     if(game)
       game.add(client, group);
     else
-      logger.warn('Player ' + client.getTag() + ' tried to join unknown game: ' + name);
+      this.logger.warn('Player ' + client.getTag() + ' tried to join unknown game: ' + name);
   }
 
   handleLeave(data, client) {

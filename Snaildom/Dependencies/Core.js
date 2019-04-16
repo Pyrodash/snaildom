@@ -3,7 +3,6 @@
 const Dependency = require('../Dependency');
 const Promise    = require('bluebird');
 
-const logger     = require('../Utils/Logger');
 const crypto     = require('../Utils/Crypto');
 const utils      = require('../Utils/Utils');
 
@@ -27,7 +26,7 @@ class Core extends Dependency {
     if(typeof data == 'object')
       data = JSON.stringify(data);
 
-    logger.write('Sent: ' + data);
+    this.logger.write('Sent: ' + data);
 
     if(this.sessionKey) {
       data = crypto.encode(data, this.sessionKey);
@@ -74,6 +73,18 @@ class Core extends Dependency {
       case 'factions':
         return this.getFactions();
       break;
+      case 'quests':
+        const era = this.world.getEra();
+
+        return this.quests.map(quest => {
+          if(!quest.day)
+            quest.day = era.days;
+          if(!quest.era)
+            quest.era = era.prefix + era.name + era.suffix;
+
+          return quest;
+        });
+      break;
       default:
         return this[key];
     }
@@ -108,6 +119,7 @@ class Core extends Dependency {
     this.iceghost = Number(Player.IceGhost);
 
     this.health = utils.parseInt(Player.Health, 100);
+    this.tutorial = Number(Player.Tutorial) || 0;
 
     if(Player.SessionKey)
       this.sessionKey = crypto.snailFeed(Player.SessionKey);
@@ -118,6 +130,15 @@ class Core extends Dependency {
 
     this.friends = Player.Friends ? Player.Friends.split(',').filter(f => f).map(f => Number(f)) : [];
     this.blocked = Player.Blocked ? Player.Blocked.split(',').filter(b => b).map(b => Number(b)) : [];
+    this.quests = !Player.Quests ? [] : Player.Quests.split(',').filter(q => q).map(q => {
+      const quest = q.split(':');
+
+      return {
+        id: Number(quest[0]),
+        stage: Number(quest[1]),
+        priority: !isNaN(quest[2]) ? Number(quest[2]) : 0
+      };
+    });
 
     this.materials = utils.parse(Player.Materials, {
       iron: 0,
@@ -125,17 +146,32 @@ class Core extends Dependency {
       gold: 0
     });
 
-    if(!this.materials.iron)
-      this.materials.iron = 0;
-    if(!this.materials.silver)
-      this.materials.silver = 0;
-    if(!this.materials.gold)
-      this.materials.gold = 0;
+    for(var i in this.materials) {
+      this.materials[i] = Number(this.materials[i]) || 0;
+    }
   }
 
-  build(inContainer) {
+  build(inContainer, caps) {
+    // TODO: Create a player model for data validation and serialization
+
     if(inContainer)
       return {player: this.build()}
+
+    if(caps) {
+      const player = this.build();
+      const plr = {};
+
+      for(var i in player) {
+        var key = utils.ucfirst(i);
+
+        if(i == 'id')
+          key = key.toUpperCase();
+
+        plr[key] = player[i];
+      }
+
+      return plr;
+    }
 
     return {
       id: this.id,
@@ -151,6 +187,7 @@ class Core extends Dependency {
       shell: this.shell,
       friends: this.friends,
       blocked: this.blocked,
+      quests: this.get('quests'),
       inventory: this.get('inventory'),
       furniture: this.get('furniture'),
       factions: this.get('factions'),
@@ -167,7 +204,7 @@ class Core extends Dependency {
       iceghost: this.iceghost,
       seat: this.seat || null,
       dummy: Number(this.dummy),
-      online: this.socket ? true : false
+      online: this.socket ? true : Boolean(this.dummy)
     }
   }
 
@@ -175,11 +212,13 @@ class Core extends Dependency {
     return this.id + '|' + this.username;
   }
 
-  move(x, y) {
+  async move(x, y) {
     if(!this.room)
       return;
 
     if(utils.isNumber(x) && utils.isNumber(y)) {
+      const duration = utils.getDuration(this.x, this.y, x, y);
+
       this.x = Number(x);
       this.y = Number(y);
 
@@ -188,6 +227,10 @@ class Core extends Dependency {
         x: x,
         y: y
       });
+
+      this.emit('moving', x, y);
+      await utils.sleep(duration);
+      this.emit('move', x, y);
     }
   }
 
@@ -269,6 +312,7 @@ class Core extends Dependency {
 
   disconnect() {
     this.server.removeClient(this);
+    this.destroy();
 
     if(this.socket) {
       if(this.socket.writable) {
@@ -302,6 +346,22 @@ class Core extends Dependency {
       this.group.remove(this);
 
     this.authenticated = false;
+    this.disconnected = true;
+    
+    this.emit('disconnected');
+  }
+
+  kick(reason) {
+    this.send('kick', {reason});
+
+    setTimeout(this.disconnect.bind(this), 1000);
+  }
+
+  ban(reason, issuer, length) {
+    this.send('ban', {reason, hours: length});
+    this.database.addBan({ User: this.id, Issuer: issuer, Reason: reason, Length: length, Active: 1 });
+
+    setTimeout(this.disconnect.bind(this), 1000);
   }
 }
 

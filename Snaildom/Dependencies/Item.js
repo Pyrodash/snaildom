@@ -42,6 +42,28 @@ class Item extends Dependency {
     }
   }
 
+  removeItem(id, quantity) {
+    if(!quantity) quantity = 1;
+    var removed = false;
+
+    for(var i in this.inventory) {
+      const item = this.inventory[i];
+
+      if(item == id) {
+        removed = true;
+        this.inventory.splice(i, 1);
+
+        if((i + 1) >= quantity)
+          break;
+      }
+    }
+
+    if(removed) {
+      this.updateColumn('Inventory', this.inventory.join(','));
+      this.send('drop', { id, quant: quantity })
+    }
+  }
+
   addFurniture(id, notify) {
     const item = furniture[id];
 
@@ -57,6 +79,31 @@ class Item extends Dependency {
         notify
       });
     }
+  }
+
+  hasMaterial(id, amt) {
+    if(!amt)
+      amt = 1;
+
+    return this.materials[id] && this.materials[id] >= amt;
+  }
+
+  hasMaterials(mats) {
+    for(var i in mats) {
+      const mat = mats[i];
+
+      if(typeof mat != 'object') {
+        if(!this.hasMaterial(i, mat))
+          return false;
+      } else {
+        const id = mat.id || i;
+
+        if(!this.hasMaterial(id, mat.amt))
+          return false;
+      }
+    }
+
+    return true;
   }
 
   addMaterial(id, amt, update) {
@@ -77,11 +124,25 @@ class Item extends Dependency {
     }
   }
 
-  removeMaterial(id, amt) {
+  removeMaterial(id, amt, update) {
     if(!amt)
       amt = 1;
 
-    this.addMaterial(-amt);
+    this.addMaterial(id, -amt, update);
+  }
+
+  removeMaterials(mats) {
+    for(var i in mats) {
+      const mat = mats[i];
+
+      if(typeof mat != 'object')
+        this.removeMaterial(i, mat);
+      else {
+        const id = mat.id || i;
+
+        this.removeMaterial(id, mat.amt, mat.update);
+      }
+    }
   }
 }
 

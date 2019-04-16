@@ -2,7 +2,6 @@
 
 const config = require('../config');
 
-const logger = require('./Utils/Logger');
 const crypto = require('./Utils/Crypto');
 const utils  = require('./Utils/Utils');
 
@@ -19,9 +18,12 @@ const EventEmitter      = require('events');
 class World extends EventEmitter {
   constructor(server) {
     super();
-    this.reloadDatabase();
 
     this.server = server;
+    this.logger = server.logger;
+
+    this.reloadDatabase();
+
     this.creationDate = new Date(1546275936813);
     this.era = config.era || {suffix: '', prefix: '', name: 'Beta Era'};
 
@@ -37,7 +39,7 @@ class World extends EventEmitter {
   reloadDatabase() {
     const Database = reload('./Database');
 
-    this.database = new Database;
+    this.database = new Database(this.logger);
     this.emit('database reloaded', this.database);
   }
 
@@ -48,7 +50,7 @@ class World extends EventEmitter {
     const now = new Date().getTime();
 
     if(client.isDead() && (!client.deathTime || (now - client.deathTime) > 5000))
-      return logger.warn('Received packet from dead client ' + client.username + ': ' + data);
+      return this.logger.warn('Received packet from dead client ' + client.username + ': ' + data);
 
     var packet = data.slice(1);
 
@@ -56,7 +58,7 @@ class World extends EventEmitter {
       packet = packet.slice(0, -1);
 
     packet = packet.split('@');
-    
+
     var header = packet.shift();
     var footer = packet.pop();
 
@@ -75,24 +77,24 @@ class World extends EventEmitter {
       switch(keyword) {
         case 'DAT':
           if(client.authenticated && !bypass)
-            return logger.warn('Authenticated client tried to send an unencrypted packet.');
+            return this.logger.warn('Authenticated client tried to send an unencrypted packet.');
 
-          logger.write('Received: ' + packet);
+          this.logger.write('Received: ' + packet);
           packet = utils.parse(packet);
 
           if(!client.authenticated && packet.msg != 'login')
-            return logger.warn('Unauthenticated client tried to send a packet they\'re not allowed to.');
+            return this.logger.warn('Unauthenticated client tried to send a packet they\'re not allowed to.');
 
           if(this.handle(packet, client))
             return;
         break;
         case 'ENC':
           if(!client.authenticated)
-            return logger.warn('Unauthenticated client tried sending an encrypted packet.');
+            return this.logger.warn('Unauthenticated client tried sending an encrypted packet.');
           if(!client.sessionKey) {
             client.disconnect();
 
-            return logger.warn('Client ' + client.id + ' has no session key.');
+            return this.logger.warn('Client ' + client.id + ' has no session key.');
           }
 
           packet = crypto.decode(packet, client.sessionKey).split('\0');
@@ -108,7 +110,7 @@ class World extends EventEmitter {
       }
     }
 
-    logger.warn('Received invalid packet: ' + data);
+    this.logger.warn('Received invalid packet: ' + data);
   }
 
   handle(packet, client) {
@@ -123,11 +125,11 @@ class World extends EventEmitter {
           try {
             handlers[i](params, client);
           } catch(e) {
-            logger.error(e);
+            this.logger.error(e);
           }
         }
       } else
-        logger.warn('Unhandled packet received: ' + action);
+        this.logger.warn('Unhandled packet received: ' + action);
 
       return true;
     }
@@ -136,7 +138,8 @@ class World extends EventEmitter {
   }
 
   getEra() {
-    const days = Math.floor(this.creationDate/8.64e7) + 1;
+    const oneDay = 24 * 60 * 60 * 1000;
+    const days = Math.round(Math.abs((new Date().getTime() - this.creationDate.getTime()) / oneDay));
 
     return {
       days: days,

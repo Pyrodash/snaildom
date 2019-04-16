@@ -30,7 +30,7 @@ class DamenBall extends Plugin {
         match: () => this.getMatch()
       };
     } else
-      logger.warn('DamenBall room not found.');
+      this.logger.warn('DamenBall room not found.');
   }
 
   getMatch() {

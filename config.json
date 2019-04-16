@@ -2,6 +2,7 @@
   "host": "localhost",
   "servers": {
     "1": {
+      "id": 1,
       "name": "Snaildom",
       "port": 5600
     }

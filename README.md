@@ -11,7 +11,9 @@ Snaildom Rewritten is a server emulator for DamenSpike/Sauron's Snaildom.
 - Games
 - NPCs
 ## TODO
-- Make a TODO list
+- Books in the library.
+- Beggar's quest.
+- Probably something else I'm forgetting about (like some bugfixes).
 
 ## Getting Started
 **Note:** Snaildom Rewritten is far from complete as I don't have much time or motivation to complete it.

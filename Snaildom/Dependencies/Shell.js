@@ -1,7 +1,5 @@
 'use strict';
 
-const logger     = require('../Utils/Logger');
-
 const Dependency = require('../Dependency');
 const Shell      = require('../Shell');
 
@@ -25,8 +23,8 @@ class MyShell extends Dependency {
             Owner: this.id
           })
           .then(res => this.createShell())
-          .catch(logger.error);
-      }).catch(logger.error);
+          .catch(this.logger.error);
+      }).catch(this.logger.error);
     });
   }
 }

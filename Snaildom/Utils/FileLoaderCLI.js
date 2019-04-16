@@ -1,6 +1,6 @@
 'use strict';
 
-const logger = require('./Logger');
+const logger = require('./LoggerV1');
 const utils  = {
   upperFirst: function(str) {
     return str.charAt(0).toUpperCase() + str.substr(1);

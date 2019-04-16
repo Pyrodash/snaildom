@@ -10,6 +10,8 @@ class Manager {
     }
 
     this.world = world;
+
+    this.logger = world.logger;
     this.server = world.server;
 
     this.database = world.database;

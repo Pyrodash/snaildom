@@ -1,7 +1,5 @@
 'use strict';
 
-const logger = require('../../../Snaildom/Utils/Logger');
-
 const Router = require('./Router');
 const bcrypt = require('bcrypt-nodejs');
 
@@ -41,7 +39,7 @@ class Login extends Router {
           res.send('0');
         } else {
           if(err)
-            logger.error(err);
+            this.logger.error(err);
 
           res.send('1');
         }

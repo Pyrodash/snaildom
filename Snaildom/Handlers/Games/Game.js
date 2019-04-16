@@ -7,6 +7,7 @@ class Game {
     this.groups = opts.groups || [];
 
     this.world = world;
+    this.logger = world.logger;
   }
 
   find(group) {

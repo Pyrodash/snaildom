@@ -1,10 +1,11 @@
 'use strict';
 
 const config = require('../config').database;
-const logger = require('./Utils/Logger');
+const utils  = require('./Utils/Utils');
 
 class Database {
-  constructor() {
+  constructor(logger) {
+    this.logger = logger;
     this.knex = require('knex')({
       client: 'mysql',
       connection: {
@@ -20,10 +21,10 @@ class Database {
 
   testConnection() {
     this.knex.raw('SELECT 1+1 AS result').then(() => {
-      logger.write('Connected to the database.');
+      this.logger.write('Connected to the database.');
     }).catch(err => {
-      logger.error(err);
-      logger.fatal('Failed to connect to database.');
+      this.logger.error(err);
+      this.logger.fatal('Failed to connect to database.');
     });
   }
 
@@ -51,23 +52,32 @@ class Database {
     return this.knex('users').first('*').where(where);
   }
 
+  getColumns(where, ...select) {
+    select = utils.flatten(select);
+
+    if(typeof where != 'object')
+      where = isNaN(where) ? {Username: where} : {ID: where};
+
+    return this.knex('users').first(...select).where(where);
+  }
+
   addGold(player, amt) {
     const type = isNaN(player) ? 'Username' : 'ID';
 
-    return this.knex('users').increment('Gold', amt).where(type, player).catch(logger.error);
+    return this.knex('users').increment('Gold', amt).where(type, player).catch(this.logger.error);
   }
 
   removeGold(player, amt) {
     const type = isNaN(player) ? 'Username' : 'ID';
 
-    return this.knex('users').decrement('Gold', amt).where(type, player).catch(logger.error);
+    return this.knex('users').decrement('Gold', amt).where(type, player).catch(this.logger.error);
   }
 
   updateColumn(player, col, val) {
     const type = isNaN(player) ? 'Username' : 'ID';
     const update = typeof col == 'object' ? col : {[col]: val};
 
-    return this.knex('users').update(update).where(type, player).catch(logger.error);
+    return this.knex('users').update(update).where(type, player).catch(this.logger.error);
   }
 
   getShell() {
@@ -92,7 +102,7 @@ class Database {
   }
 
   createShell(shell) {
-    return this.knex('shells').insert(shell).catch(logger.error);
+    return this.knex('shells').insert(shell).catch(this.logger.error);
   }
 
   getBan(where) {
@@ -103,6 +113,10 @@ class Database {
       ...where,
       Active: 1
     }).orderBy('ID', 'desc');
+  }
+
+  addBan(ban) {
+    return this.knex('bans').insert(ban).catch(this.logger.error);
   }
 }
 

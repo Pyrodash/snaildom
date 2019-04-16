@@ -12,7 +12,7 @@ class Weapon extends Dependency {
 
     const item = Items[this.toy];
 
-    if(item.isSword)
+    if(item && item.isSword)
       hasSword = true;
 
     return hasSword;

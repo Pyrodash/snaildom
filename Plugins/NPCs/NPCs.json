@@ -4,8 +4,8 @@
     "Shell": "yellow",
     "X": 204.15,
     "Y": 198,
-    "Username": "Guard",
     "ID": 99991,
+    "Username": "Guard",
     "Room": "courtyard"
   },
   {
@@ -13,8 +13,8 @@
     "Shell": "yellow",
     "X": 168.3,
     "Y": 199.15,
-    "Username": "Royal Guard",
     "ID": 99992,
+    "Username": "Royal Guard",
     "Room": "thrones",
     "Dialogue": {
       "message": "Greetings Citizen.",
@@ -39,8 +39,8 @@
     "Shell": "yellow",
     "X": 590,
     "Y": 199.15,
-    "Username": "Royal Guard",
     "ID": 99993,
+    "Username": "Royal Guard",
     "Room": "thrones",
     "Dialogue": {
       "message": "Greetings Citizen.",
@@ -65,11 +65,11 @@
     "Shell": "yellow",
     "X": 368.75,
     "Y": 361.45,
-    "Username": "Blacksmith",
     "ID": 99994,
+    "Username": "Blacksmith",
     "Room": "blacksmith",
     "Dialogue": {
-      "message": "Welcome to my forge.&break; How can I help you?",
+      "message": [["Welcome to my forge.", "How can I help you?"]],
       "responses": [
         {
           "id": 4,
@@ -81,5 +81,90 @@
         }
       ]
     }
+  },
+  {
+    "Shell": "blue",
+    "X": 368.75,
+    "Y": 361.45,
+    "ID": 99995,
+    "Username": "Beggar",
+    "Room": "north_forest",
+    "Messages": ["A coin for a poor beggar", "Please help. I'm starvin'"],
+    "Dialogue": {},
+    "AI": true,
+    "Mode": "idle"
+  },
+  {
+    "Actual Head": "blacktophat",
+    "Head": "sparklytophat",
+    "Toy": "sword",
+    "Shell": "orange",
+    "Face": "wisebeard",
+    "X": 245,
+    "Y": 330,
+    "Frame": 2,
+    "ID": 99996,
+    "Username": "Crazy Old Dude",
+    "Room": "west_forest",
+    "Dialogue": {
+      "message": "YAHINGEL DINGLE!!!",
+      "responses": [
+        {
+          "id": "GOODBYE",
+          "message": "I'm going now..."
+        },
+        {
+          "id": 6,
+          "message": "BAHAHAHH JA!"
+        }
+      ]
+    }
+  },
+  {
+    "Shell": "green",
+    "X": 604,
+    "Y": 253,
+    "Frame": 6,
+    "ID": 99997,
+    "Username": "Clarkson",
+    "Room": "inn",
+    "Dialogue": {
+      "message": "Please don't hurt me!",
+      "responses": [
+        {
+          "id": "GOODBYE",
+          "message": "*Bye*"
+        }
+      ]
+    }
+  },
+  {
+    "Shell": "brown",
+    "Face": "moustache",
+    "X": 537,
+    "Y": 189,
+    "Frame": 2,
+    "ID": 99998,
+    "Username": "Barliman",
+    "Room": "inn",
+    "Dialogue": {
+      "message": [
+        ["Welcome! Welcome, welcome! That is my motto.", "See it up there above the door?"],
+        ["I serve the best ales in the forest!", "I also do golden chips and juicy meat!", "How can I please you today,", "could I interest you in some food or drink?"]
+      ],
+      "responses": "t.13"
+    }
+  },
+  {
+    "Head": "ironvikinghelmet",
+    "Toy": "sword",
+    "Shell": "yellow",
+    "X": 368.75,
+    "Y": 361.45,
+    "Username": "Thief",
+    "Room": "grotto",
+    "Dialogue": {},
+    "AI": true,
+    "Mode": "aggressive"
   }
 ]

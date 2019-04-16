@@ -10,7 +10,7 @@ class Writing extends Group {
     if(!opts)
       opts = {};
 
-    super({...opts, maxClients: 2}, game);
+    super({...opts, maxClients: 2, sendLeave: false}, game);
 
     this.registerEvents();
   }
@@ -50,13 +50,13 @@ class Writing extends Group {
           this.body += message;
           this.turn = seatId == 2 ? 1 : 2;
 
-          //if(this.round < this.maxRounds)
+          if(this.round < this.maxRounds)
             this.update('continue', {
               body: this.body,
               turn: this.turn
             });
-          //else
-            //this.end();
+          else
+            this.end();
         }
     }
   }
@@ -70,7 +70,7 @@ class Writing extends Group {
 
     this.turn = 1;
     this.round = 0;
-    //this.maxRounds = utils.rand(10, 25);
+    this.maxRounds = utils.rand(10, 25);
     this.started = true;
 
     this.update('begin', {

@@ -1,7 +1,5 @@
 'use strict';
 
-const logger     = require('../Utils/Logger');
-
 const Dependency = require('../Dependency');
 const Promise    = require('bluebird');
 const Client     = require('../Client');
