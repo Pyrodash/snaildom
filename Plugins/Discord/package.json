@@ -1,0 +1,8 @@
+{
+  "name": "dicord",
+  "version": "1.0.0",
+  "author": "Jack",
+  "dependencies": {
+    "discord.js": "^11.4.2"
+  }
+}

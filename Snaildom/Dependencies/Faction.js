@@ -1,7 +1,6 @@
 'use strict';
 
 const Dependency = require('../Dependency');
-const Factions   = require('../Crumbs/Factions');
 
 class Faction extends Dependency {
   parseFactions(factions) {
@@ -11,7 +10,7 @@ class Faction extends Dependency {
 
     for(var i in factions) {
       const faction = factions[i];
-      const factionObj = findFaction(faction[0]);
+      const factionObj = findFaction(faction[0], this.crumbs.factions);
 
       if(!factionObj) continue;
 
@@ -52,11 +51,11 @@ class Faction extends Dependency {
   }
 }
 
-function findFaction(f) {
+function findFaction(f, factions) {
   const type = isNaN(f) ? 'string' : 'internal';
 
-  for(var i in Factions) {
-    const faction = Factions[i];
+  for(var i in factions) {
+    const faction = factions[i];
 
     if(type == 'internal' && faction[type] == f)
       return faction;

@@ -20,6 +20,7 @@ class Client extends EventManager {
     this.database = this.world.database;
 
     this.roomManager = this.world.roomManager;
+    this.crumbs = this.world.crumbs;
 
     this.dependencies = [];
     this.__registerEvents();

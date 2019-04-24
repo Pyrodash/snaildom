@@ -1,17 +1,25 @@
 'use strict';
 
-class Game {
+const Persistent = require('../../Utils/Persistent');
+
+class Game extends Persistent {
   constructor(opts, world) {
+    super();
+
     this.id = opts.id;
     this.name = opts.name || 'Game';
-    this.groups = opts.groups || [];
+
+    this.set('groups', opts.groups || []);
+
+    if(this.setup && typeof this.setup == 'function')
+      this.setup();
 
     this.world = world;
     this.logger = world.logger;
   }
 
   find(group) {
-    return this.groups[group];
+    return this.get('groups')[group];
   }
 
   add(client, group) {

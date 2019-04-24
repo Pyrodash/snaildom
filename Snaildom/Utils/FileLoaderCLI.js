@@ -1,6 +1,5 @@
 'use strict';
 
-const logger = require('./LoggerV1');
 const utils  = {
   upperFirst: function(str) {
     return str.charAt(0).toUpperCase() + str.substr(1);
@@ -14,6 +13,7 @@ class FileLoaderCLI {
 
     this.cli = cli;
     this.loader = loader;
+    this.logger = loader.logger;
 
     this.commands = {
       "load": this.suffix ? "load" + suffix : "load " + this.loader.name,
@@ -41,13 +41,13 @@ class FileLoaderCLI {
               const res = this.loader.load(filePath);
 
               if(!res)
-                logger.warn(upperName + ' is invalid or not a class.');
+                this.logger.warn(upperName + ' is invalid or not a class.');
             } else
-              logger.warn(upperName + ' doesn\'t exist.');
+              this.logger.warn(upperName + ' doesn\'t exist.');
           })
-          .catch(logger.error);
+          .catch(this.logger.error);
       } else
-        logger.warn(upperName + ' already loaded.');
+        this.logger.warn(upperName + ' already loaded.');
     }, true)
     this.cli.register(this.commands.reload, this.loader.reload.bind(this.loader), true);
     this.cli.register(this.commands.refresh, this.loader.loadFiles.bind(this.loader), true);

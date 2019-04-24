@@ -9,11 +9,13 @@ class Writing extends Game {
       id: 'writing',
       name: 'Write with Me'
     }, world);
+  }
 
-    this.groups = [
+  setup() {
+    this.set('groups', [
       new Group(null, this),
       new Group(null, this)
-    ];
+    ]);
   }
 }
 

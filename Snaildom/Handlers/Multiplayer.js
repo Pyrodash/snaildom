@@ -16,7 +16,8 @@ class Multiplayer extends Handler {
       ignored: ['game'],
       cli: {
         cli: world.cli
-      }
+      },
+      logger: world.logger
     });
 
     this.register('joinmg', 'handleJoin');

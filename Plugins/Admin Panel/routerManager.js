@@ -13,7 +13,8 @@ class RouterManager {
       ignored: ['router'],
       cli: {
         cli: panel.world.cli
-      }
+      },
+      logger: panel.logger
     });
   }
 }

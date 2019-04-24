@@ -14,6 +14,7 @@ class Handler extends EventManager {
     this.database = world.database;
     this.roomManager = world.roomManager;
 
+    this.crumbs = world.crumbs;
     this.packets = {};
   }
 

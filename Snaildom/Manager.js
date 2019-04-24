@@ -4,17 +4,20 @@ const FileLoader = require('./Utils/FileLoader');
 
 class Manager {
   constructor(opts, world) {
-    if(opts.constructor.name === 'World') {
+    if(opts && opts.constructor.name === 'World') {
       world = opts;
       opts = null;
     }
 
-    this.world = world;
+    if(world) {
+      this.world = world;
 
-    this.logger = world.logger;
-    this.server = world.server;
+      this.logger = world.logger;
+      this.server = world.server;
 
-    this.database = world.database;
+      this.database = world.database;
+      this.crumbs = world.crumbs;
+    }
 
     if(opts)
       this.createLoader(opts);
@@ -23,12 +26,18 @@ class Manager {
   }
 
   __registerEvents() {
+    if(!this.world)
+      return;
+
     this.world.on('database reloaded', db => {
       this.database = db;
     });
   }
 
   createLoader(opts) {
+    if(!opts['logger'])
+      opts['logger'] = this.logger;
+
     this.loader = new FileLoader(opts);
   }
 }

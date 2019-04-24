@@ -18,16 +18,19 @@ class Writing extends Group {
   onUpdate(data, client) {
     const {action} = data;
 
+    const clients = this.get('clients');
+    const turn = this.get('turn');
+
     switch(action) {
       case 'ready':
         this.start();
       break;
       case 'submit':
         var   {message} = data;
-        const seatId = this.clients.indexOf(client) + 1;
+        const seatId = clients.indexOf(client) + 1;
 
-        if(seatId == this.turn) {
-          ++this.round;
+        if(seatId == turn) {
+          this.increment('round');
           message = utils.replaceUnicode(message);
 
           if(utils.isEmpty(message))
@@ -47,13 +50,13 @@ class Writing extends Group {
 
           message = utils.escapeHTML(message);
 
-          this.body += message;
-          this.turn = seatId == 2 ? 1 : 2;
+          this.add('body', message);
+          this.set('turn', seatId == 2 ? 1 : 2);
 
-          if(this.round < this.maxRounds)
+          if(this.get('round') < this.get('maxRounds'))
             this.update('continue', {
-              body: this.body,
-              turn: this.turn
+              body: this.get('body'),
+              turn: this.get('turn')
             });
           else
             this.end();
@@ -68,33 +71,34 @@ class Writing extends Group {
   start() {
     this.reset();
 
-    this.turn = 1;
-    this.round = 0;
-    this.maxRounds = utils.rand(10, 25);
-    this.started = true;
+    this.set('turn', 1);
+    this.set('round', 0);
+    this.set('maxRounds', utils.rand(10, 25));
+    this.set('started', true);
 
     this.update('begin', {
-      turn: this.turn,
-      body: this.body
+      turn: this.get('turn'),
+      body: this.get('body')
     });
 
     // TODO: Round timer
   }
 
   end() {
-    this.body += '<br><br>';
+    this.add('body', '<br><br>');
+    const body = this.get('body');
 
     this.update('theend', {
-      body: this.body,
-      story: this.body + 'The End!'
+      body: body,
+      story: body + 'The End!'
     });
     this.reset();
   }
 
   reset() {
-    this.body = '<b>Once upon a time</b> '; // Not sure if I should always have an intro. Perhaps a randomized one from an array of intros?
-    this.started = false;
-    this.turn = null;
+    this.set('body', '<b>Once upon a time</b> '); // Not sure if I should always have an intro. Perhaps a randomized one from an array of intros?
+    this.set('started', false);
+    this.set('turn', null);
   }
 
   registerEvents() {

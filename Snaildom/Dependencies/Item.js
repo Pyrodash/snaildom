@@ -1,17 +1,14 @@
 'use strict';
 
 const Dependency = require('../Dependency');
+
 const reload     = require('require-reload');
-
-const items      = reload('../Crumbs/Items');
-const utils      = require('../Utils/Utils');
-
-const furniture  = reload('../Crumbs/Furniture');
+const utils      = reload('../Utils/Utils');
 
 class Item extends Dependency {
   equip(id) {
     if(this.inventory.includes(id)) {
-      const item = items[id];
+      const item = this.crumbs.items[id];
       const itemId = this[item.type] == item.id ? null : item.id;
 
       if(item) {
@@ -26,7 +23,7 @@ class Item extends Dependency {
   }
 
   addItem(id, notify) {
-    const item = items[id];
+    const item = this.crumbs.items[id];
 
     if(notify != false)
       notify = true;
@@ -40,6 +37,10 @@ class Item extends Dependency {
         notify
       });
     }
+  }
+
+  hasItem(id) {
+    return this.inventory.find(item => item == id);
   }
 
   removeItem(id, quantity) {
@@ -65,7 +66,7 @@ class Item extends Dependency {
   }
 
   addFurniture(id, notify) {
-    const item = furniture[id];
+    const item = this.crumbs.furniture[id];
 
     if(notify != false)
       notify = true;

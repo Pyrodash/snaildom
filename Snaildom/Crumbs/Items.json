@@ -653,5 +653,11 @@
     "name": "Popcorn",
     "cost": 5,
     "type": "food"
+  },
+  "book1": {
+    "id": "book1",
+    "name": "Snaildom Guide",
+    "cost": 0,
+    "type": "book"
   }
 }

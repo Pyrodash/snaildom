@@ -1,7 +1,6 @@
 'use strict';
 
 const Dependency = require('../Dependency');
-const Items      = require('../Crumbs/Items');
 
 class Weapon extends Dependency {
   hasSword() {
@@ -10,7 +9,7 @@ class Weapon extends Dependency {
     if(this.hasSword)
       hasSword = true;
 
-    const item = Items[this.toy];
+    const item = this.crumbs.items[this.toy];
 
     if(item && item.isSword)
       hasSword = true;

@@ -1,8 +1,9 @@
 'use strict';
 
 class CLI {
-  constructor() {
+  constructor(logger) {
     this.stdin = process.openStdin();
+    this.logger = logger;
 
     this.listen();
   }
@@ -12,6 +13,7 @@ class CLI {
       data = data.toString().trim();
 
       var params = data.split(' ').slice(1);
+      var handled = false;
 
       for(var i in this.commands) {
         const handler = this.commands[i];
@@ -22,14 +24,23 @@ class CLI {
           if(cmdPrefix.length > 0)
             params = params.slice(cmdPrefix.length);
 
-          if(handler.process && typeof handler.process == 'function')
+          if(handler.process && typeof handler.process == 'function') {
             if(!handler.single)
               handler.process(...params);
             else
               handler.process(params.join(' '));
 
-          break;
+            handled = true;
+            break;
+          }
         }
+      }
+
+      if(!handled) {
+        if(this.logger)
+          this.logger.warn('Command not found.');
+        else
+          console.warn('Command not found.');
       }
     });
   }

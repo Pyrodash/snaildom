@@ -25,17 +25,23 @@ class Discord extends Plugin {
   }
 
   start() {
+    const error = err => {
+      if(err.stack)
+        err = err.stack;
+      if(err.message)
+        err = err.message;
+
+      this.logger.error(err);
+    };
+
     this.client = new Client;
 
     this.addEvent(this.client, 'ready', () => {
       this.logger.write('Discord is ready.');
     });
 
-    this.addEvent(this.client, 'error', err => {
-      this.logger.error(err);
-    });
-
-    this.client.login(this.get('token'));
+    this.addEvent(this.client, 'error', error);
+    this.client.login(this.get('token')).catch(error);
   }
 
   log(msg, level) {
@@ -53,7 +59,7 @@ class Discord extends Plugin {
       .setColor(level.color)
       .setTitle(msg.action)
       .setDescription(msg.message)
-      //.setFooter('World world name here')
+      .setFooter('Server: ' + this.server.info.name || 'Snaildom')
       .setTimestamp(msg.time);
 
     if(msg.thumbnail)

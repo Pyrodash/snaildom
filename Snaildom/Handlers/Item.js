@@ -3,8 +3,7 @@
 const Handler = require('../Handler');
 
 const reload    = require('require-reload');
-const items     = reload('../Crumbs/Items');
-const furniture = reload('../Crumbs/Furniture');
+const utils     = reload('../Utils/Utils');
 
 class Item extends Handler {
   constructor(world) {
@@ -15,13 +14,15 @@ class Item extends Handler {
 
     this.register('forge', 'handleForge');
     this.register('drop', 'handleDrop');
+
+    this.register('read', 'handleRead');
   }
 
   handleBuy(data, client) {
     const {id} = data;
 
-    if(id && items[id]) {
-      const item = items[id];
+    if(id && this.crumbs.items[id]) {
+      const item = this.crumbs.items[id];
 
       if(client.gold >= item.cost) {
         client.removeGold(item.cost);
@@ -34,8 +35,8 @@ class Item extends Handler {
   handleBuyFurniture(data, client) {
     const {id} = data;
 
-    if(id && furniture[id]) {
-      const item = furniture[id];
+    if(id && this.crumbs.furniture[id]) {
+      const item = this.crumbs.furniture[id];
 
       if(client.gold >= item.cost) {
         client.removeGold(item.cost);
@@ -47,7 +48,7 @@ class Item extends Handler {
 
   handleForge(data, client) {
     const {id} = data;
-    const item = items[id];
+    const item = this.crumbs.items[id];
 
     if(item && item.forge) {
       if(client.hasMaterials(item.forge)) {
@@ -67,6 +68,19 @@ class Item extends Handler {
     const {id} = data;
 
     client.removeItem(id);
+  }
+
+  handleRead(data, client) {
+    const {id} = data;
+
+    if(client.hasItem(id)) {
+      const book = this.crumbs.books[id];
+
+      if(!book)
+        client.send('book', { content: '<book>Book not found.</book>' });
+      else
+        client.send('book', { content: utils.buildBook(book) });
+    }
   }
 }
 
