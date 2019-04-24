@@ -16,6 +16,7 @@
     "id": "market",
     "name": "Market Village",
     "isGame": "0",
+    "music": "kids",
     "internal": "3"
   },
   "5": {

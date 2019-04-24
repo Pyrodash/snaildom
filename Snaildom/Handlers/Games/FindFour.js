@@ -9,8 +9,10 @@ class FindFour extends Game {
       id: 'connectfour', // isnt it called find four? @damen
       name: 'Connect Four'
     }, world);
+  }
 
-    this.groups = [
+  setup() {
+    this.set('groups', [
       new Group({
         warps: [
           {
@@ -53,7 +55,7 @@ class FindFour extends Game {
           }
         ]
       }, this)
-    ];
+    ]);
   }
 }
 

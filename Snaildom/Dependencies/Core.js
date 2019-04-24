@@ -26,7 +26,8 @@ class Core extends Dependency {
     if(typeof data == 'object')
       data = JSON.stringify(data);
 
-    this.logger.write('Sent: ' + data);
+    const debug = this.world.config['logging']['debug'];
+    const log = 'Sent: ' + data;
 
     if(this.sessionKey) {
       data = crypto.encode(data, this.sessionKey);
@@ -34,6 +35,9 @@ class Core extends Dependency {
     }
 
     this.socket.write(data + '\0');
+
+    if(debug != false)
+      this.logger.write(log);
   }
 
   send(action, params) {
@@ -345,9 +349,12 @@ class Core extends Dependency {
     if(this.group)
       this.group.remove(this);
 
+    if(this.authenticated)
+      this.server.updatePopulation();
+
     this.authenticated = false;
     this.disconnected = true;
-    
+
     this.emit('disconnected');
   }
 

@@ -1,4 +1,10 @@
+const reload   = require('require-reload')(require);
 const latinMap = require('./LatinMap');
+
+const https    = require('https');
+const http     = require('http');
+const fs       = require('fs');
+const qs       = require('querystring');
 
 function padLeft(num, base, chr) {
   var len = (String(base || 10).length - String(num).length) + 1;
@@ -26,10 +32,12 @@ const utils = {
     return string.charAt(0).toUpperCase() + string.slice(1);
   },
   parse: function(json, def) {
-    if(typeof json == 'object')
-      return json;
     if(def === undefined)
       def = false;
+    if(!json)
+      json = def;
+    if(typeof json == 'object')
+      return json;
 
     try {
       json = JSON.parse(json);
@@ -167,6 +175,133 @@ const utils = {
     return arr.reduce(function (flat, toFlatten) {
       return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
     }, []);
+  },
+  getIP: function() {
+    return new Promise((resolve, reject) => {
+      http.get({
+        host: 'ipv4bot.whatismyipaddress.com',
+        port: 80,
+        path: '/'
+      }, res => {
+        if(res.statusCode != 200)
+          return reject(new Error('Unknown status code: ' + res.statusCode));
+
+        var body = '';
+
+        res.setEncoding('utf-8');
+
+        res.on('data', chunk => body += chunk);
+        res.on('end', () => resolve(body));
+      }).on('error', reject);
+    });
+  },
+  buildBook: function(book) {
+    if(typeof book == 'string')
+      return utils.buildBook({ content: book });
+
+    var newContent = '';
+
+    var title = book.title;
+    var content = book.content;
+
+    if(title)
+      newContent += '<center><b>' + title + '</b></center><br>';
+
+    newContent += content;
+    return '<book>' + newContent + '</book>';
+  },
+  formatSound: function(sound, constants) {
+    const s = {};
+
+    if(!isNaN(sound))
+      s['id'] = sound;
+    else {
+      // Append .mp3 if not url
+
+      if(sound.substr(0, 4) != 'http') {
+        if(sound.substr(-4) != '.mp3')
+          sound += '.mp3';
+      }
+
+      s['file'] = sound;
+    }
+
+    if(constants) {
+      for(var i in constants) {
+        s[i] = constants[i];
+      }
+    }
+
+    return s;
+  },
+  validateCaptcha: function(response, ip, recaptcha) {
+    return new Promise((resolve, reject) => {
+      const {secret_key} = recaptcha;
+      const postData = qs.stringify({
+        secret: secret_key,
+        response,
+        remoteip: ip
+      });
+      console.log(secret_key);
+      const opts = {
+        host: 'www.google.com',
+        port: 443,
+        path: '/recaptcha/api/siteverify',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      };
+
+      const req = https.request(opts, res => {
+        if(res.statusCode != 200)
+          return reject(new Error('Unknown status code: ' + res.statusCode));
+
+        var body = '';
+
+        res.setEncoding('utf8');
+
+        res.on('data', chunk => body += chunk);
+        res.on('end', () => {
+          body = utils.parse(body);
+
+          if(!body)
+            reject(new Error('Invalid body: ' + body));
+          else
+            resolve(body.success);
+        });
+      }).on('error', reject);
+
+      req.write(postData);
+      req.end();
+    });
+  },
+  findClassPath: function(_class, cache) {
+    if(!cache)
+      cache = require('module')._cache;
+
+    for(var i in cache) {
+      const mdl = cache[i];
+
+      if(mdl.exports.prototype instanceof _class)
+        return mdl.filename;
+      else if(mdl.exports === _class)
+        return mdl.filename;
+    }
+
+    return false;
+  },
+  reload: function(mdl, def) {
+    if(def === undefined)
+      def = false;
+
+    try {
+      mdl = reload(mdl);
+    } catch(e) {
+      mdl = def;
+    }
+
+    return mdl;
   }
 };
 

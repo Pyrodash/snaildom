@@ -12,22 +12,27 @@ class Logger {
     this.levels = [];
     this.cache = [];
 
-    for(var level of levels) {
-      this.createLevel(level);
-    }
-
+    this.createLevels(levels);
     this.interval = setInterval(this.saveLoop.bind(this), 5 * 60 * 1000)
   }
 
   saveLoop() {
-    if(this.cache.length == 0) return;
+    return new Promise((resolve, reject) => {
+      if(this.cache.length == 0) return;
 
-    fs.writeFile(this.path, this.cache.join('\n') + '\n', 'utf8', err => {
-      if(err) {
-        console.warn('Failed to save logs. What the fuck!');
-        console.error(err);
-      } else
-        this.log(null, 'Saved logs successfully.', { save: false });
+      fs.appendFile(this.path, this.cache.join('\n') + '\n', 'utf8', err => {
+        if(err) {
+          console.warn('Failed to save logs. WTF!');
+          console.error(err);
+
+          reject(err);
+        } else {
+          this.cache = [];
+
+          this.log(null, 'Saved logs successfully.', { save: false });
+          resolve();
+        }
+      });
     });
   }
 
@@ -43,11 +48,11 @@ class Logger {
     if(typeof level == 'string')
       level = this.findLevel(level);
     if(!level)
-      level = this.levels[0]; // Use first level as fallback
+      level = this.findLevel('info') || { name: 'info', color: 'green' };
 
     const color = level.color;
     const name  = level.name.toUpperCase();
-    var   msg   = '[' + name + ']';
+    var   msg   = level.key || '[' + name + ']';
 
     if(opts.prefix)
       msg = '[' + opts.prefix + ']' + msg;
@@ -109,14 +114,59 @@ class Logger {
     if(level.function)
       funcName = level.function;
 
-    this.levels.push(level);
     this[funcName] = (...args) => {
       this.log(level, ...args);
     };
+    level.function = { f: this[funcName], name: funcName };
+    this.levels.push(level);
+  }
+
+  createLevels(levels) {
+    for(var level of levels) {
+      this.createLevel(level);
+    }
+  }
+
+  createSubLevel(level) {
+    level.parent = level.parent.toLowerCase();
+    const parent = this.levels.find(lev => lev.name.toLowerCase() == level.parent);
+
+    if(!parent)
+      return this.log('warning', 'Parent ' + level.parent + ' not found for sublevel ' + level.name + '.');
+
+    if(!level.color)
+      level.color = parent.color;
+
+    level.key = '[' + parent.name.toUpperCase() + ']' + '[' + level.name.toUpperCase() + ']';
+    level.sublevel = true;
+
+    this.createLevel(level);
   }
 
   findLevel(name) {
     return this.levels.find(level => level.name == name.toLowerCase());
+  }
+
+  removeLevel(level) {
+    const func = level.function;
+
+    this[func.name] = null;
+    delete this[func.name];
+
+    for(var i in this.levels) {
+      if(this.levels[i] == level) {
+        this.levels.splice(i, 1);
+
+        break;
+      }
+    }
+  }
+
+  removeLevels(removeSubs) {
+    for(var level of this.levels) {
+      if(!level.sublevel || removeSubs == true)
+        this.removeLevel(level);
+    }
   }
 }
 

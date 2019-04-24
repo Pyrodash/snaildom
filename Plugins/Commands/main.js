@@ -1,9 +1,10 @@
 'use strict';
 
 const Plugin = require('../Plugin');
+const reload = require('require-reload');
 
-const utils  = require('../../Snaildom/Utils/Utils');
-const filter = require('../../Snaildom/Utils/Filter');
+const utils  = reload('../../Snaildom/Utils/Utils');
+const filter = reload('../../Snaildom/Utils/Filter');
 
 class Commands extends Plugin {
   constructor(manager) {
@@ -24,6 +25,7 @@ class Commands extends Plugin {
       'ban': 'handleBan'
     };
 
+    this.registerTypedCommands();
     this.override('handler', 'chat', 'processMessage');
   }
 
@@ -142,6 +144,161 @@ class Commands extends Plugin {
         }
       }
     }
+  }
+
+  registerTypedCommand(opts) {
+    const TYPE_DEFAULT = 'default';
+    const TYPES_DEFAULT = [
+      {
+        name: 'global',
+        prefix: false,
+        target: this.world
+      },
+      {
+        name: 'room',
+        prefix: 'r',
+        target: client => client.room
+      },
+      {
+        name: 'player',
+        prefix: 'p'
+      }
+    ];
+
+    var {name, types, action, rank, processors} = opts;
+
+    const validRank = myRank => {
+      if(!isNaN(rank)) {
+        return myRank >= rank;
+      } else if(typeof rank == 'object') {
+        var comparison;
+        var value;
+
+        if(rank.constructor === Array) {
+          comparison = rank.shift();
+          value = rank.shift();
+        } else {
+          comparison = rank.comparison;
+          value = rank.value;
+        }
+
+        switch(comparison) {
+          case '=':
+          case '==':
+            return myRank == value;
+          break;
+          case '>':
+            return myRank > value;
+          break;
+          case '<':
+            return myRank < value;
+          break;
+          case '>=':
+            return myRank >= value;
+          break;
+          case '<=':
+            return myRank <= value;
+          default:
+            return false;
+        }
+      } else if(isNaN(rank)) {
+        const operators = ['=', '==', '>', '<', '>=', '<='];
+
+        for(var operator of operators) {
+          if(rank.startsWith(operator)) {
+            rank = {
+              operator,
+              value: rank.substr(operator.length).trim()
+            };
+
+            return validRank(myRank);
+          }
+        }
+      }
+
+      return false;
+    };
+    const createHandler = type => {
+      return async (data, client) => {
+        if(!rank || validRank(client.rank)) {
+          const send = (data, target) => {
+            if(!target)
+              target = type.target;
+
+            if(typeof target == 'function')
+              target = target(client);
+
+            target.send(action, data);
+          };
+
+          const processor = processors[type.name] || processors['default'];
+
+          if(!processor)
+            return send(data);
+
+          try {
+            const res = await processor(data, client, send);
+
+            if(res)
+              send(res);
+          } catch(err) {
+            this.logger.error(err.stack);
+          }
+        }
+      };
+    };
+
+    if(types == TYPE_DEFAULT)
+      types = TYPES_DEFAULT;
+
+    for(var type of types) {
+      if(!type.prefix && type.prefix !== false)
+        type.prefix = type.name;
+
+      const prefix = type.prefix || '';
+      const cmdName = prefix + name;
+
+      this.registerCommand(cmdName, createHandler(type));
+    }
+  }
+
+  registerTypedCommands() {
+    this.registerTypedCommand({
+      name: 'sound',
+      types: 'default',
+      action: 'sound',
+      rank: 3, // client.rank >= 3
+      processors: {
+        default: data => utils.formatSound(data.join(' '), { resume: 'music', loop: false }),
+        player: (data, client, send) => {
+          const player = data.shift();
+          const sound = utils.formatSound(data.join(' '), { resume: 'music', loop: false });
+
+          const sclient = this.server.getClient(player);
+
+          if(sclient)
+            send(sound, sclient);
+        }
+      }
+    });
+
+    this.registerTypedCommand({
+      name: 'overlay',
+      types: 'default',
+      action: 'overlay',
+      rank: 3,
+      processors: {
+        default: data => data.join(' '),
+        player: (data, client, send) => {
+          const player = data.shift();
+          const link = overlay.join(' ');
+          const sclient = this.server.getClient(player);
+
+          if(sclient)
+            send(link, sclient);
+        }
+      }
+    });
   }
 
   handleGiveGold(data, client, next) {

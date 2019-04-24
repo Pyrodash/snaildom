@@ -1,11 +1,9 @@
 'use strict';
 
-const Handler   = require('../Handler');
-const reload    = require('require-reload')(require);
+const Handler = require('../Handler');
 
-const items     = reload('../Crumbs/Items');
-const furniture = reload('../Crumbs/Furniture');
-const factions  = reload('../Crumbs/Factions');
+const reload  = require('require-reload')(require);
+const utils   = reload('../Utils/Utils');
 
 class Auth extends Handler {
   constructor(world) {
@@ -14,16 +12,31 @@ class Auth extends Handler {
     this.register('login', 'handleLogin');
   }
 
-  handleLogin(data, client) {
+  async handleLogin(data, client) {
+    const {captcha} = data;
     const loginKey  = data.playerkey;
     const cipherKey = data.playerkey2;
 
     const fail = err => {
-      this.logger.error(err);
-      console.log(err.stack);
+      if(err)
+        this.logger.error(err.stack);
 
       client.error(null, true);
     };
+
+    if(this.world.recaptcha) {
+      if(!captcha)
+        return fail();
+
+      try {
+        const valid = await utils.validateCaptcha(captcha, client.ip, this.world.recaptcha);
+
+        if(!valid)
+          return fail();
+      } catch(err) {
+        return fail(err);
+      }
+    }
 
     this.database.getPlayer('LoginKey', loginKey)
       .then(player => {
@@ -42,20 +55,23 @@ class Auth extends Handler {
             return;
           }
 
+          const sclient = this.server.getClient(player.ID);
+
+          if(sclient)
+            sclient.fatal('You have logged into this snail on another computer/window. You have been logged out.', true);
+
           client.authenticated = true;
 
           client.setPlayer(player);
           client.updateColumn('IP', client.ip);
 
-          client.send('items', {
-            items: items,
-            furniture: furniture,
-            factions: factions
-          });
+          this.server.updatePopulation();
+
+          client.send('items', this.crumbs.build());
 
           client.refreshWorld();
           client.refreshFriends();
-          client.joinRoom();
+          client.joinRoom(this.world.config.spawn);
 
           if(!client.tutorial)
             client.addQuest(1, false);

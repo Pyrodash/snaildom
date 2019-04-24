@@ -4,8 +4,11 @@ const Manager = require('../Manager');
 const path    = require('path');
 
 class Plugin extends Manager {
-  constructor(world) {
+  constructor(world, autoLoad) {
     super(world);
+
+    if(autoLoad === undefined)
+      autoLoad = true;
 
     this.createLoader({
       "name": "plugin",
@@ -14,8 +17,9 @@ class Plugin extends Manager {
       "mainFile": "main",
       "params": this,
       "cli": {
-        "cli": world.cli
-      }
+        "cli": world ? world.cli : null
+      },
+      autoLoad
     });
   }
 

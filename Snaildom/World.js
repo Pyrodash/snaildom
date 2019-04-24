@@ -1,13 +1,12 @@
 'use strict';
 
-const config = require('../config');
-
 const crypto = require('./Utils/Crypto');
 const utils  = require('./Utils/Utils');
 
 const reload = require('require-reload');
 
 const CLI               = require('./CLI');
+const Crumbs            = require('./Crumbs');
 
 const DependencyManager = require('./Managers/Dependency');
 const HandlerManager    = require('./Managers/Handler');
@@ -22,13 +21,19 @@ class World extends EventEmitter {
     this.server = server;
     this.logger = server.logger;
 
+    this.reloadConfig();
+
+    this.recaptcha = this.config.recaptcha;
+    this.crumbs = new Crumbs(this.logger);
+
+    this.createDebugger();
     this.reloadDatabase();
 
-    this.creationDate = new Date(1546275936813);
-    this.era = config.era || {suffix: '', prefix: '', name: 'Beta Era'};
+    this.creationDate = new Date(this.config.creationDate);
+    this.era = this.config.era || {suffix: '', prefix: '', name: 'Beta Era'};
 
-    this.cli = new CLI;
-    this.cli.register('reload database', this.reloadDatabase.bind(this));
+    this.cli = new CLI(this.logger);
+    this.registerCLICommands();
 
     this.roomManager = new RoomManager(this);
     this.dependencyManager = new DependencyManager(this);
@@ -43,14 +48,68 @@ class World extends EventEmitter {
     this.emit('database reloaded', this.database);
   }
 
+  reloadConfig() {
+    this.config = reload('../config');
+
+    this.recaptcha = this.config.recaptcha;
+    this.era       = this.config.era;
+
+    this.server.setInfo(this.config.servers[this.server.id]);
+
+    // We don't really need to update the levels in runtime but say you added a new level for a plugin and wanted to hot reload it. Just kidding idk why I added this its not really needed.
+    this.logger.removeLevels();
+    this.logger.createLevels(this.config.logging.levels);
+    this.createDebugger();
+
+    this.logger.write('Reloaded server configuration.');
+  }
+
+  registerCLICommands() {
+    this.cli.register('reload database', this.reloadDatabase.bind(this));
+    this.cli.register('reload crumbs', this.crumbs.reload.bind(this.crumbs));
+    this.cli.register('reload config', this.reloadConfig.bind(this));
+  }
+
+  createDebugger() {
+    const debug = {};
+    const levels = this.logger.levels;
+
+    for(var level of levels) {
+      const func = level.function;
+
+      debug[func.name] = (...args) => {
+        if(this.config['logging']['debug'] == true)
+          func.f(...args);
+      };
+    }
+
+    this.debugger = debug;
+
+    return debug;
+  }
+
+  write(data, ignored) {
+    for(var client of this.server.clients) {
+      if(!ignored || client != ignored)
+        client.write(data);
+    }
+  }
+
+  send(msg, params, ignored) {
+    this.write({
+      msg,
+      params
+    }, ignored);
+  }
+
   process(data, client, bypass) {
     if(data == '<policy-file-request/>')
-      return client.write('<cross-domain-policy><allow-access-from domain="*.' + (config.host || 'localhost') + '" to-ports="*" /></cross-domain-policy>');
+      return client.write('<cross-domain-policy><allow-access-from domain="*.' + (this.config.host || 'localhost') + '" to-ports="*" /></cross-domain-policy>');
 
     const now = new Date().getTime();
 
     if(client.isDead() && (!client.deathTime || (now - client.deathTime) > 5000))
-      return this.logger.warn('Received packet from dead client ' + client.username + ': ' + data);
+      return this.debugger.warn('Received packet from dead client ' + client.username + ': ' + data);
 
     var packet = data.slice(1);
 
@@ -77,24 +136,24 @@ class World extends EventEmitter {
       switch(keyword) {
         case 'DAT':
           if(client.authenticated && !bypass)
-            return this.logger.warn('Authenticated client tried to send an unencrypted packet.');
+            return this.debugger.warn('Authenticated client tried to send an unencrypted packet.');
 
-          this.logger.write('Received: ' + packet);
+          this.debugger.write('Received: ' + packet);
           packet = utils.parse(packet);
 
           if(!client.authenticated && packet.msg != 'login')
-            return this.logger.warn('Unauthenticated client tried to send a packet they\'re not allowed to.');
+            return this.debugger.warn('Unauthenticated client tried to send a packet they\'re not allowed to.');
 
           if(this.handle(packet, client))
             return;
         break;
         case 'ENC':
           if(!client.authenticated)
-            return this.logger.warn('Unauthenticated client tried sending an encrypted packet.');
+            return this.debugger.warn('Unauthenticated client tried sending an encrypted packet.');
           if(!client.sessionKey) {
             client.disconnect();
 
-            return this.logger.warn('Client ' + client.id + ' has no session key.');
+            return this.debugger.warn('Client ' + client.id + ' has no session key.');
           }
 
           packet = crypto.decode(packet, client.sessionKey).split('\0');
@@ -110,7 +169,7 @@ class World extends EventEmitter {
       }
     }
 
-    this.logger.warn('Received invalid packet: ' + data);
+    this.debugger.warn('Received invalid packet: ' + data);
   }
 
   handle(packet, client) {
@@ -125,11 +184,14 @@ class World extends EventEmitter {
           try {
             handlers[i](params, client);
           } catch(e) {
+            if(e.stack)
+              e = e.stack;
+
             this.logger.error(e);
           }
         }
       } else
-        this.logger.warn('Unhandled packet received: ' + action);
+        this.debugger.warn('Unhandled packet received: ' + action);
 
       return true;
     }

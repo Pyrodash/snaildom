@@ -13,6 +13,7 @@ class Room extends EventEmitter {
     this.server = world.server;
     this.database = world.database;
 
+    this.crumbs = world.crumbs;
     this.clients = [];
 
     this.apply(crumbs);
@@ -29,6 +30,7 @@ class Room extends EventEmitter {
     this.nullGame = Boolean(Number(crumbs.nullGame));
 
     this.owner = crumbs.owner || {};
+    this.music = crumbs.music;
     this.crumbs = crumbs;
   }
 
@@ -98,6 +100,7 @@ class Room extends EventEmitter {
       name: this.name,
       isGame: this.isGame,
       isShell: this.isShell,
+      music: this.music,
       nullGame: this.nullGame,
       players: players
     };

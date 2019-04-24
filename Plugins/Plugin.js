@@ -27,6 +27,7 @@ class Plugin extends EventManager {
     this.world = manager.world;
     this.server = this.world.server;
     this.database = this.world.database;
+    this.crumbs = this.world.crumbs;
 
     this.roomManager = this.world.roomManager;
     this.handlers = this.world.handlers;

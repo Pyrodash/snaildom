@@ -11,24 +11,26 @@ class FindFour extends Group {
 
   onUpdate(data, client) {
     const {action} = data;
+    const clients = this.get('clients');
+    const turn = this.get('turn');
 
     switch(action) {
       case 'ready':
-        if(this.clients.length >= 2)
+        if(clients.length >= 2)
           this.start();
       break;
       case 'place':
-        if(this.started && !client.spectator) {
+        if(this.get('started') && !client.spectator) {
           const {row} = data;
-          const playerId = this.clients.indexOf(client) + 1; // Player's id in the lobby
+          const playerId = clients.indexOf(client) + 1; // Player's id in the lobby
 
-          if(playerId == this.turn) {
+          if(playerId == turn) {
             this.placeChip(row);
 
             if(!this.checkWin()) {
-              this.turn = this.turn == 2 ? 1 : 2;
+              this.set('turn', turn == 2 ? 1 : 2);
               this.update('place', {
-                row: row
+                row
               }, client);
             }
           }
@@ -37,16 +39,19 @@ class FindFour extends Group {
   }
 
   placeChip(row) {
-    this.lastRow = row;
+    this.set('lastRow', row);
 
-    const turn = this.turn;
+    const turn = this.get('turn');
     const rowIndex = row - 1;
 
-    for(var i in this.board) {
-      var rowArr = this.board[i];
+    const board = this.get('board');
+
+    for(var i in board) {
+      var rowArr = board[i];
 
       if(rowArr[rowIndex] == 0) {
-        this.board[i][rowIndex] = turn;
+        board[i][rowIndex] = turn;
+        this.set('board', board);
 
         break;
       }
@@ -76,13 +81,17 @@ class FindFour extends Group {
   }
 
   column(column) {
-    var currentPlayer = this.clients[this.turn - 1];
-    var currentPlayerId = this.turn;
+    const clients = this.get('clients');
+    const turn = this.get('turn');
+    const board = this.get('board');
+
+    var currentPlayer = clients[turn - 1];
+    var currentPlayerId = turn;
 
     var streak = 0;
 
-    for(var i in this.board) {
-      const row = this.board[i];
+    for(var i in board) {
+      const row = board[i];
 
       if(row[column] == currentPlayerId) {
         ++streak;
@@ -97,7 +106,8 @@ class FindFour extends Group {
   }
 
   vertical() {
-    var rows = this.board.length;
+    const board = this.get('board');
+    var rows = board.length;
 
     for(var column = 0; column < rows; column++) {
       var result = this.column(column);
@@ -110,18 +120,22 @@ class FindFour extends Group {
   }
 
   horizontal() {
-    var rows = this.board.length;
+    const board = this.get('board');
+    const clients = this.get('clients');
+    const turn = this.get('turn');
 
-    var currentPlayer = this.clients[this.turn - 1];
-    var currentPlayerId = this.turn;
+    var rows = board.length;
+
+    var currentPlayer = clients[turn - 1];
+    var currentPlayerId = turn;
 
     var streak = 0;
 
     for(var row = 0; row < rows; row++) {
-      var columns = this.board[row].length;
+      var columns = board[row].length;
 
       for(var column = 0; column < columns; column++) {
-        if(this.board[row][column] === currentPlayerId) {
+        if(board[row][column] === currentPlayerId) {
           ++streak;
 
           if(streak === 4)
@@ -135,32 +149,36 @@ class FindFour extends Group {
   }
 
   diagonal() {
-    var currentPlayer = this.clients[this.turn - 1];
-    var currentPlayerId = this.turn;
+    const clients = this.get('clients');
+    const board = this.get('board');
+    const turn = this.get('turn');
 
-    var rows = this.board.length;
+    var currentPlayer = clients[turn - 1];
+    var currentPlayerId = turn;
+
+    var rows = board.length;
     var streak = 0;
 
     for(var row = 0; row < rows; row++) {
-      var columns = this.board[row].length;
+      var columns = board[row].length;
 
       for(var column = 0; column < columns; column++) {
-        if(this.board[row][column] === currentPlayerId) {
-          if(this.board[row + 1] && this.board[row + 1][column + 1] === currentPlayerId &&
-             this.board[row + 2] && this.board[row + 2][column + 2] === currentPlayerId &&
-             this.board[row + 3] && this.board[row + 3][column + 3] === currentPlayerId) {
+        if(board[row][column] === currentPlayerId) {
+          if(board[row + 1] && board[row + 1][column + 1] === currentPlayerId &&
+             board[row + 2] && board[row + 2][column + 2] === currentPlayerId &&
+             board[row + 3] && board[row + 3][column + 3] === currentPlayerId) {
             return currentPlayer;
           }
 
-          if(this.board[row - 1] && this.board[row - 1][column - 1] === currentPlayerId &&
-             this.board[row - 2] && this.board[row - 2][column - 2] === currentPlayerId &&
-             this.board[row - 3] && this.board[row - 3][column - 3] === currentPlayerId) {
+          if(board[row - 1] && board[row - 1][column - 1] === currentPlayerId &&
+             board[row - 2] && board[row - 2][column - 2] === currentPlayerId &&
+             board[row - 3] && board[row - 3][column - 3] === currentPlayerId) {
             return currentPlayer;
           }
 
-          if(this.board[row - 1] && this.board[row - 1][column + 1] === currentPlayerId &&
-             this.board[row - 2] && this.board[row - 2][column + 2] === currentPlayerId &&
-             this.board[row - 3] && this.board[row - 3][column + 3] === currentPlayerId) {
+          if(board[row - 1] && board[row - 1][column + 1] === currentPlayerId &&
+             board[row - 2] && board[row - 2][column + 2] === currentPlayerId &&
+             board[row - 3] && board[row - 3][column + 3] === currentPlayerId) {
             return currentPlayer;
           }
         }
@@ -171,19 +189,20 @@ class FindFour extends Group {
   }
 
   win(client) {
-    const winnerIndex = this.clients.indexOf(client) + 1;
+    const clients = this.get('clients');
+    const winnerIndex = clients.indexOf(client) + 1;
 
     this.update('win', {
       turn: winnerIndex,
-      row: this.lastRow
+      row: this.get('lastRow')
     });
     this.reset();
 
     // TODO (VERY IMPORTANT): Fix the fucking last piece being added by the loser on the winner's screen. Sounds like a client issue but I can't fucking decompile the stupid game. There's got to be a way.
     // TODO #2: This hasn't been thorougly tested and tracked yet but I'm certain the winning algorithm is flawed and broken. Should reiterate over this in the future.
-    
-    for(var i in this.clients) {
-      const sclient = this.clients[i];
+
+    for(var i in clients) {
+      const sclient = clients[i];
 
       if(!sclient.spectator && sclient != client) {
         if(sclient.ip == client.ip)
@@ -200,23 +219,23 @@ class FindFour extends Group {
   start() {
     this.reset();
 
-    this.started = true;
-    this.turn = 1;
+    this.set('started', true);
+    this.set('turn', 1);
 
-    this.update('begin', {turn: this.turn});
+    this.update('begin', { turn: this.get('turn') });
   }
 
   reset() {
-    this.board = [
+    this.set('board', [
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
       [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ];
-    this.started = false;
-    this.lastRow = null;
+    ]);
+    this.set('started', false);
+    this.set('lastRow', null);
   }
 
   registerEvents() {

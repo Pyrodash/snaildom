@@ -1,8 +1,8 @@
 'use strict';
 
-const EventManager = require('../../../Utils/EventManager');
+const Persistent = require('../../../Utils/Persistent');
 
-class Group extends EventManager {
+class Group extends Persistent {
   constructor(opts, game) {
     super();
 
@@ -17,18 +17,20 @@ class Group extends EventManager {
     this.game = game;
     this.logger = game.logger;
 
-    this.started = false;
-    this.clients = [];
-
-    this.maxClients = opts.maxClients || 0;
-    this.warps = opts.warps;
-
-    this.sendLeave = opts.sendLeave != undefined ? Boolean(opts.sendLeave) : true;
+    this.set({
+      started: false,
+      clients: [],
+      maxClients: opts.maxClients || 0,
+      warps: opts.warps,
+      sendLeave: opts.sendLeave != undefined ? Boolean(opts.sendLeave) : true
+    });
   }
 
   write(data, ignored) {
-    for(var i in this.clients) {
-      const client = this.clients[i];
+    const clients = this.get('clients');
+
+    for(var i in clients) {
+      const client = clients[i];
 
       if(!ignored || client != ignored)
         client.write(data);
@@ -51,12 +53,14 @@ class Group extends EventManager {
   }
 
   add(client) {
-    client.spectator = this.clients.length >= this.maxClients;
+    const clients = this.get('clients');
+    const maxClients = this.get('maxClients');
 
-    this.clients.push(client);
+    client.spectator = clients.length >= maxClients;
+    clients.push(client);
 
-    client.group = this;
-    client.game = this.game;
+    this.depend(client, 'group');
+    this.game.depend(client, 'game');
 
     const data = {
       id: this.game.id,
@@ -79,10 +83,11 @@ class Group extends EventManager {
     client.send('multigame', data);
     this.update('join', client.build(true));
 
-    const seatId = this.clients.indexOf(client);
+    const seatId = clients.indexOf(client);
+    const warps = this.get('warps');
 
-    if(this.warps && this.warps[seatId]) {
-      const warp = this.warps[seatId];
+    if(warps && warps[seatId]) {
+      const warp = warps[seatId];
 
       client.move(warp.x, warp.y);
 
@@ -94,13 +99,13 @@ class Group extends EventManager {
 
     this.emit('user added', client);
 
-    if(this.clients.length >= this.maxClients && !this.started)
+    if(clients.length >= maxClients && !this.get('started'))
       this.emit('ready');
   }
 
   remove(client) {
     var isPlayer = false;
-    this.clients = this.clients.filter(sclient => sclient != client && sclient.id != client.id);
+    this.set('clients', this.get('clients').filter(sclient => sclient != client && sclient.id != client.id));
 
     if(this.started === true && !client.spectator)
       isPlayer = true;
@@ -111,16 +116,24 @@ class Group extends EventManager {
 
     this.emit('user removed', client);
 
-    if(isPlayer && this.sendLeave)
+    if(isPlayer && this.get('sendLeave'))
       this.update('leave', client.build(true));
   }
 
   build() {
-    return this.clients.map(client => client.build());
+    return this.get('clients').map(client => client.build());
   }
 
   destroy() {
     this.removeEvents();
+  }
+
+  reload(oldGroup) {
+    const clients = oldGroup.get('clients');
+
+    for(var client of clients) {
+      client.group = this;
+    }
   }
 }
 
