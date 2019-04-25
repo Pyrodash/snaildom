@@ -4,9 +4,10 @@ const cp        = require('child_process');
 const os        = require('os');
 
 const path      = require('path');
-const config    = require('../config');
 
-const Installer = require('./installer');
+// Running scripts in npm is retarded so we have to use absolute paths.
+const config    = require(path.join(__dirname, '..', '/config.json'));
+const Installer = require(path.join(__dirname, 'installer'));
 
 const npmCmd    = os.platform() == 'win32' ? 'npm.cmd' : 'npm';
 const dbConfig  = {

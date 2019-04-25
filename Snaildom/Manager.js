@@ -26,7 +26,7 @@ class Manager {
   }
 
   __registerEvents() {
-    if(!this.world)
+    if(!this.world || !this.world.on)
       return;
 
     this.world.on('database reloaded', db => {

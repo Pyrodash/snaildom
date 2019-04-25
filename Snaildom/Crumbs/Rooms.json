@@ -115,6 +115,12 @@
     "isGame": "0",
     "internal": "20"
   },
+  "21": {
+    "id": "cinema",
+    "name": "Cinema",
+    "isGame": "0",
+    "internal": "21"
+  },
 
   "900": {
     "id": "railandcart",

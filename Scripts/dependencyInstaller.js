@@ -3,8 +3,9 @@
 const path = require('path');
 
 class DependencyInstaller {
-  constructor(installer) {
+  constructor(installer, logger) {
     this.installer = installer;
+    this.logger = logger;
   }
 
   install() {
@@ -12,7 +13,7 @@ class DependencyInstaller {
       const utils         = require('../Snaildom/Utils/Utils');
 
       const PluginManager = require('../Snaildom/Managers/Plugin');
-      const pluginManager = new PluginManager(null, false);
+      const pluginManager = new PluginManager({ logger: this.logger }, false);
 
       pluginManager.loader.listFiles().then(async files => {
         for(var i in files) {
