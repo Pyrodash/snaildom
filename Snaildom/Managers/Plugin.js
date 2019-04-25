@@ -5,7 +5,7 @@ const path    = require('path');
 
 class Plugin extends Manager {
   constructor(world, autoLoad) {
-    super(world);
+    super(null, world);
 
     if(autoLoad === undefined)
       autoLoad = true;

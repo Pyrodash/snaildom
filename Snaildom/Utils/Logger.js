@@ -6,14 +6,16 @@ const utils  = require('./Utils');
 const colors = require('colors');
 
 class Logger {
-  constructor(savePath, levels) {
+  constructor(savePath, levels, loop) {
     this.path = savePath;
 
     this.levels = [];
     this.cache = [];
 
     this.createLevels(levels);
-    this.interval = setInterval(this.saveLoop.bind(this), 5 * 60 * 1000)
+
+    if(loop !== false)
+      this.interval = setInterval(this.saveLoop.bind(this), 5 * 60 * 1000)
   }
 
   saveLoop() {
