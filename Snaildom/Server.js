@@ -39,9 +39,6 @@ class Server {
         this.logger.error(err);
     });
 
-    process.on('SIGINT', this.handleShutdown.bind(this));
-    process.on('SIGTERM', this.handleShutdown.bind(this));
-
     this.world = new World(this);
 
     this.createRedis();
@@ -101,7 +98,15 @@ class Server {
   }
 
   removeClient(client) {
-    this.clients = this.clients.filter(c => c != client && c.socket != client.socket && c.socket != client);
+    for(var i in this.clients) {
+      const sclient = this.clients[i];
+
+      if(sclient == client || sclient.socket == client.socket || sclient.socket == client) {
+        this.clients.splice(i, 1);
+
+        break;
+      }
+    }
   }
 
   async createRedis() {
@@ -169,21 +174,6 @@ class Server {
 
     this.redis.set(this.id + '.population', clients.length);
     this.redis.set(this.id + '.players', JSON.stringify(clients));
-  }
-
-  async handleShutdown() {
-    try {
-      await this.logger.saveLoop();
-      await this.updateInfo(true);
-    } catch(err) {
-      this.logger.error(err.stack);
-      process.exit(1);
-    }
-
-    this.server.close();
-    this.logger.warn('Shutting down...');
-
-    process.exit(0);
   }
 }
 
