@@ -15,9 +15,7 @@
   "3": {
     "id": "market",
     "name": "Market Village",
-    "isGame": "0",
-    "music": "kids",
-    "internal": "3"
+    "isGame": "0"
   },
   "5": {
     "id": "stylestore",
@@ -47,6 +45,7 @@
     "id": "clearing",
     "name": "Clearing",
     "isGame": "0",
+    "music": "valley-of-the-wind",
     "internal": "9"
   },
   "10": {
