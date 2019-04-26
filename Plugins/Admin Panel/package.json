@@ -10,5 +10,5 @@
     "express": "^4.16.4",
     "helmet": "^3.15.0"
   },
-  "disabled": false
+  "disabled": true
 }
