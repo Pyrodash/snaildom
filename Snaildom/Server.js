@@ -120,6 +120,7 @@ class Server {
     conf['host'] = config['redis']['host'] || '127.0.0.1';
     conf['port'] = config['redis']['port'] || '6379',
     conf['path'] = config['redis']['path'] || null;
+    conf['password'] = config['redis']['password'] || null;
 
     this.logger.createSubLevel({ name: 'redis', color: 'green', parent: 'info' })
 
