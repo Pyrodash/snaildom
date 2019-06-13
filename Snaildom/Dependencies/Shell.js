@@ -22,7 +22,9 @@ class MyShell extends Dependency {
           this.database.createShell({
             Owner: this.id
           })
-          .then(res => this.createShell())
+          .then(res => {
+            this.createShell().then(resolve).catch(reject);
+          })
           .catch(this.logger.error);
       }).catch(this.logger.error);
     });

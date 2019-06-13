@@ -45,6 +45,13 @@ class Auth extends Handler {
         if(player.Dead == 1)
           return client.fatal('This snail is dead. Please make another one until this one is healed.', true);
 
+        if(this.world.info.rank) {
+          const rank = this.world.info.rank;
+
+          if(player.Rank < rank)
+            return client.disconnect();
+        }
+
         this.database.getBan(player.ID).then(Ban => {
           if(Ban) {
             if(Ban.Length == 999)
@@ -71,7 +78,7 @@ class Auth extends Handler {
 
           client.refreshWorld();
           client.refreshFriends();
-          client.joinRoom(this.world.config.spawn);
+          client.joinRoom(this.world.info.spawn);
 
           if(!client.tutorial)
             client.addQuest(1, false);

@@ -20,6 +20,7 @@ class World extends EventEmitter {
 
     this.server = server;
     this.logger = server.logger;
+    this.info   = server.info;
 
     this.reloadConfig();
 
