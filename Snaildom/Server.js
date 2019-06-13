@@ -122,6 +122,8 @@ class Server {
     conf['path'] = config['redis']['path'] || null;
     conf['password'] = config['redis']['password'] || null;
 
+    if(!conf['password']) delete conf['password'];
+
     this.logger.createSubLevel({ name: 'redis', color: 'green', parent: 'info' })
 
     this.redis = redis.createClient(conf);
