@@ -15,7 +15,8 @@ class MyShell extends Dependency {
           else
             this.database.createShell({
               Owner: this.id,
-              Type: defaultType
+              Type: defaultType,
+              Furniture: ''
             })
             .then(res => {
               this.createShell({ ID: res[0], Type: defaultType }).then(resolve).catch(reject);
