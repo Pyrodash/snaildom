@@ -506,6 +506,11 @@ class Commands extends Plugin {
 
     this.moderation.punish('ban', { user, reason, length }, client);
   }
+
+  handleGlobal(data, client) {
+    if(client.rank > 2)
+      this.world.send('message', { message: data.join(' ') });
+  }
 }
 
 module.exports = Commands;
