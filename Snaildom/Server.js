@@ -13,7 +13,7 @@ const redis    = require('redis');
 const path     = require('path');
 const net      = require('net');
 
-const memwatch = require('node-memwatch');
+//const memwatch = require('node-memwatch');
 
 class Server {
   constructor(world) {
@@ -22,11 +22,11 @@ class Server {
 
     this.logger = new Logger(path.join(__dirname, 'Logs', 'world-' + world.id + '.txt'), config.logging.levels);
 
-    memwatch.on('leak', info => {
+    /*memwatch.on('leak', info => {
       this.logger.warn('Memory leak detected!');
 
       console.log(info);
-    });
+    });*/
 
     process.on('uncaughtException', err => {
       //this.logger.warn('Uncaught exception!!!');
